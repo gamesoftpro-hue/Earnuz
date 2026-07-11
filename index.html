@@ -2369,7 +2369,7 @@ async function submitCaptchaAnswer() {
 // в будущем планируется обмен монет на денежные купоны для вывода.
 const DAILY_BONUS_REGULAR_REWARD = 100;
 const DAILY_BONUS_SEVENTH_DAY_REWARD = 200;
-function dailyBonusDayReward(day) { return day >= 7 ? DAILY_BONUS_SEVENTH_DAY_REWARD : DAILY_BONUS_REGULAR_REWARD; }
+function dailyBonusDayReward(day) { return day === 7 ? DAILY_BONUS_SEVENTH_DAY_REWARD : DAILY_BONUS_REGULAR_REWARD; }
 function dailyBonusDateStr(d) {
   const mm = String(d.getUTCMonth()+1).padStart(2,'0');
   const dd = String(d.getUTCDate()).padStart(2,'0');
@@ -2436,7 +2436,6 @@ function dailyBonusGridHTML(st) {
   html += '</div>';
   return html;
 }
-function dailyBonusNoop() {}
 async function openDailyBonusModal() {
   const uid = await getMyUserId();
   const st = uid ? dailyBonusGetState(uid) : { coins:0, day:0, last:'' };
@@ -2451,7 +2450,7 @@ async function openDailyBonusModal() {
     breakdown: note,
     hideCancel: claimedToday,
     okLabel: claimedToday ? L('Приходи завтра','Ertaga keling') : L('Забрать бонус','Bonusni olish'),
-    onConfirm: claimedToday ? dailyBonusNoop : dailyBonusClaim
+    onConfirm: claimedToday ? null : dailyBonusClaim
   });
 }
 async function dailyBonusClaim() {
