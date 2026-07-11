@@ -2299,6 +2299,20 @@ function captchaShowInterstitial() {
   } catch(e) { console.error('adsgram interstitial show', e); }
 }
 
+// показывать интерстициал не при каждом нажатии, а раз в N раз (N=3) — отдельный счётчик на каждую кнопку
+const ADSGRAM_INTERSTITIAL_EVERY = 3;
+function adsgramInterstitialShouldShow(key) {
+  try {
+    const k = `earnuz_adsgram_int_${key}`;
+    const n = ((parseInt(localStorage.getItem(k), 10) || 0) + 1) % ADSGRAM_INTERSTITIAL_EVERY;
+    localStorage.setItem(k, String(n));
+    return n === 0;
+  } catch(e) { return false; }
+}
+function captchaShowInterstitialThrottled(key) {
+  if (adsgramInterstitialShouldShow(key)) captchaShowInterstitial();
+}
+
 
 function captchaGenerateExample() {
   const a = Math.floor(Math.random() * CAPTCHA_MAX_DIGIT);
@@ -2332,7 +2346,7 @@ function closeCaptchaModal() {
 }
 
 async function submitCaptchaAnswer() {
-  captchaShowInterstitial();
+  captchaShowInterstitialThrottled('captcha');
   const inp = document.getElementById('captcha-answer-input');
   const fb = document.getElementById('captcha-feedback');
   const given = parseInt(inp?.value, 10);
@@ -6321,6 +6335,7 @@ async function confirmWithdraw() {
     </div>`,
     okLabel: L('Вывести','Chiqarish'),
     onConfirm: async () => {
+      captchaShowInterstitialThrottled('withdraw');
       // SECURE: withdrawal goes through a server-side function that verifies
       // the Telegram cryptographic signature — cannot be forged from outside
       const auth = tgAuthPayload();
