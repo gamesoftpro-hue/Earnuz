@@ -227,7 +227,7 @@ body {
   display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
 }
 .captcha-ad-slot {
-  margin: 6px 20px; min-height: 60px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.14);
+  margin: 6px 10px; min-height: 72px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.14);
   background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center;
 }
 .task-row {
@@ -271,6 +271,35 @@ body {
 .ref-text .ref-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.2px; }
 .ref-text .ref-sub { font-size: 12px; color: var(--muted); font-weight: 300; }
 .ref-arrow { margin-left: auto; font-size: 18px; color: var(--accent); }
+
+/* DAILY BONUS */
+.bonus-banner {
+  margin: 0 20px 16px;
+  background: linear-gradient(135deg, rgba(255,183,3,0.16), rgba(255,183,3,0.04));
+  border: 1px solid rgba(255,183,3,0.32); border-radius: var(--card-r);
+  padding: 16px 18px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.bonus-banner-icon { font-size: 26px; line-height: 1; }
+.bonus-banner-text { flex: 1; min-width: 0; }
+.bonus-banner-title { font-size: 14px; font-weight: 700; letter-spacing: -0.2px; }
+.bonus-banner-sub { font-size: 11.5px; color: var(--muted); font-weight: 300; margin-top: 3px; }
+.bonus-banner-arrow { margin-left: auto; font-size: 18px; color: var(--yellow); }
+.home-coin-line {
+  font-size: 10.5px; color: var(--yellow); font-weight: 500; margin-top: 4px; text-align: right; cursor: pointer;
+}
+.db-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 4px 0 12px; }
+.db-day {
+  border-radius: 12px; padding: 10px 4px; text-align: center; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s;
+}
+.db-day .db-num { font-size: 9.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.db-day .db-coin { font-size: 13px; font-weight: 700; margin-top: 5px; }
+.db-day.db-past { opacity: 0.35; }
+.db-day.db-current { border-color: var(--yellow); background: rgba(255,183,3,0.14); box-shadow: 0 0 0 2px rgba(255,183,3,0.2); }
+.db-day.db-claimed-today { border-color: var(--green); background: rgba(52,199,89,0.14); }
+.db-note { font-size: 11.5px; color: var(--muted); line-height: 1.5; text-align: left; margin-top: 4px; }
+.db-total { font-size: 12.5px; font-weight: 600; text-align: left; margin-bottom: 10px; }
 
 /* REF SCREEN */
 .ref-screen { padding: 16px 20px 0; }
@@ -893,12 +922,15 @@ body.employer .home-hero { margin-bottom: 22px; }
         <div class="home-level" data-ru="Новичок · Уровень 1" data-uz="Yangi · 1-daraja">Новичок · Уровень 1</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div class="bal-chip" id="home-bal-chip">0 $</div>
-      <div onclick="showScreen('notifications',null,4)" style="position:relative;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
-        <span class="adm-count" id="bell-badge-1" style="display:none;position:absolute;top:-4px;right:-4px">0</span>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="bal-chip" id="home-bal-chip">0 $</div>
+        <div onclick="showScreen('notifications',null,4)" style="position:relative;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+          <span class="adm-count" id="bell-badge-1" style="display:none;position:absolute;top:-4px;right:-4px">0</span>
+        </div>
       </div>
+      <div class="home-coin-line" id="home-coin-line" onclick="openDailyBonusModal()">🪙 0 <span data-ru="монет" data-uz="tanga">монет</span></div>
     </div>
   </div>
 
@@ -908,6 +940,16 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div class="home-hero-title"><span class="ht-thin" data-ru="Зарабатывай" data-uz="Daromad ol">Зарабатывай</span> <span class="ht-bold" data-ru="выполняя задания" data-uz="topshiriqlarni bajarib">выполняя задания</span></div>
     <div class="home-hero-sub" data-ru="Подписки, отзывы, игры, опросы — получай деньги за каждое выполненное задание" data-uz="Obunalar, sharhlar, o'yinlar, so'rovlar — har bir bajarilgan topshiriq uchun pul ol">Подписки, отзывы, игры, опросы — получай деньги за каждое выполненное задание</div>
     <button class="home-hero-btn" onclick="showScreen('tasks',null,1)" data-ru="Начать зарабатывать" data-uz="Daromad olishni boshlash">Начать зарабатывать</button>
+  </div>
+
+  <!-- Daily bonus banner -->
+  <div class="bonus-banner" onclick="openDailyBonusModal()" style="margin-top:16px">
+    <div class="bonus-banner-icon">🎁</div>
+    <div class="bonus-banner-text">
+      <div class="bonus-banner-title" data-ru="Ежедневный бонус — забирай монеты" data-uz="Kunlik bonus — tangalarni oling">Ежедневный бонус — забирай монеты</div>
+      <div class="bonus-banner-sub" data-ru="Заходи каждый день 7 дней подряд — на 7-й день 200 монет" data-uz="Har kuni 7 kun ketma-ket kiring — 7-kunda 200 tanga">Заходи каждый день 7 дней подряд — на 7-й день 200 монет</div>
+    </div>
+    <div class="bonus-banner-arrow">→</div>
   </div>
 
   <!-- Referral banner -->
@@ -998,7 +1040,7 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div class="svc-row" style="margin-top:8px">
       <div class="svc-row-info">
         <div class="svc-row-title" data-ru="Ввод капчи за деньги" data-uz="Pul uchun captcha kiritish">Ввод капчи за деньги</div>
-        <div class="svc-row-sub" data-ru="200 сум за 10 капч · без ограничений" data-uz="10 captcha uchun 200 so'm · cheklovsiz">200 сум за 10 капч · без ограничений</div>
+        <div class="svc-row-sub" id="captcha-price-sub">200 сум за 10 капч · без ограничений</div>
       </div>
       <button class="svc-row-btn" id="captcha-open-btn" onclick="openCaptchaModal()" data-ru="Начать" data-uz="Boshlash">Начать</button>
     </div>
@@ -1112,6 +1154,8 @@ body.employer .home-hero { margin-bottom: 22px; }
         <div class="bal-cell-wd-label" data-ru="Бонусный" data-uz="Bonus">Бонусный</div>
         <div class="bal-cell-wd-val" style="color:#a78bfa">0 $</div>
         <div class="bal-cell-wd-sub" data-ru="за активность" data-uz="faollik uchun">за активность</div>
+        <div class="bal-cell-wd-sub" id="wd-bonus-coins" style="color:var(--yellow);margin-top:4px;font-weight:600">🪙 0 <span data-ru="монет" data-uz="tanga">монет</span></div>
+        <div class="bal-cell-wd-sub" style="font-style:italic" data-ru="скоро — обмен на купоны для вывода" data-uz="tez orada — chiqarish uchun kuponlarga almashtiriladi">скоро — обмен на купоны для вывода</div>
       </div>
     </div>
 
@@ -1871,10 +1915,11 @@ body.employer .home-hero { margin-bottom: 22px; }
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title" data-ru="Ввод капчи за деньги" data-uz="Pul uchun captcha kiritish">Ввод капчи за деньги</div>
-    <div style="padding:0 20px 10px;font-size:12px;color:var(--muted);line-height:1.5" data-ru="200 сум за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно." data-uz="Har 10 ta to'g'ri javob uchun 200 so'm. Noto'g'ri javob hisobga olinmaydi, lekin jarima ham yo'q — cheksiz bajarish mumkin.">200 сум за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.</div>
+    <div style="padding:0 20px 10px;font-size:12px;color:var(--muted);line-height:1.5" id="captcha-modal-desc">200 сум за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.</div>
 
-    <!-- рекламный слот сверху (для будущей рекламы) -->
+    <!-- рекламные слоты сверху (2 шт., для рекламной сети) -->
     <div id="captcha-ad-slot-top" class="captcha-ad-slot"></div>
+    <div id="captcha-ad-slot-top-2" class="captcha-ad-slot"></div>
 
     <div style="padding:6px 20px 4px;text-align:center">
       <div id="captcha-progress" style="font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:10px">0/10</div>
@@ -1883,8 +1928,9 @@ body.employer .home-hero { margin-bottom: 22px; }
       <div id="captcha-feedback" style="min-height:18px;font-size:12.5px;font-weight:700;margin-bottom:4px"></div>
     </div>
 
-    <!-- рекламный слот снизу (для будущей рекламы) -->
+    <!-- рекламные слоты снизу (2 шт., для рекламной сети) -->
     <div id="captcha-ad-slot-bottom" class="captcha-ad-slot"></div>
+    <div id="captcha-ad-slot-bottom-2" class="captcha-ad-slot"></div>
 
     <div class="modal-actions">
       <button class="btn-primary" id="captcha-submit-btn" onclick="submitCaptchaAnswer()" data-ru="Отправить" data-uz="Yuborish">Отправить</button>
@@ -2221,13 +2267,36 @@ function captchaCountKey(uid) { return `earnuz_captcha_count_${uid}`; }
 function captchaGetCount(uid) { try { return parseInt(localStorage.getItem(captchaCountKey(uid)) || '0'); } catch(e) { return 0; } }
 function captchaSetCount(uid, v) { try { localStorage.setItem(captchaCountKey(uid), String(v)); } catch(e) {} }
 
-// перезапуск рекламных блоков вокруг капчи — сюда позже вставится код рекламной сети
+// подписи капчи — суммы в выбранной валюте (обновляются при смене валюты)
+function updateCaptchaTexts() {
+  const reward = captchaRewardPer10();
+  const sub = document.getElementById('captcha-price-sub');
+  if (sub) sub.textContent = fmtMoney(reward) + ' ' + L('за 10 капч · без ограничений','10 captcha uchun · cheklovsiz');
+  const desc = document.getElementById('captcha-modal-desc');
+  if (desc) desc.textContent = fmtMoney(reward) + ' ' + L('за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.','har 10 ta to\'g\'ri javob uchun. Noto\'g\'ri javob hisobga olinmaydi, lekin jarima ham yo\'q — cheksiz bajarish mumkin.');
+}
+
+// перезапуск рекламных блоков вокруг капчи (2 сверху + 2 снизу) — сюда позже вставится код рекламной сети
 function refreshCaptchaAdSlots() {
-  ['captcha-ad-slot-top','captcha-ad-slot-bottom'].forEach(id => {
+  ['captcha-ad-slot-top','captcha-ad-slot-top-2','captcha-ad-slot-bottom','captcha-ad-slot-bottom-2'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { /* TODO: вставить вызов обновления рекламного блока здесь */ }
   });
 }
+
+// AdsGram: интерстициал на кнопке «Отправить» в капче (блок int-37998)
+const CAPTCHA_INTERSTITIAL_BLOCK_ID = "int-37998";
+let _captchaInterstitialController = null;
+function captchaInterstitialInit() {
+  try {
+    if (window.Adsgram && !_captchaInterstitialController) _captchaInterstitialController = window.Adsgram.init({ blockId: CAPTCHA_INTERSTITIAL_BLOCK_ID });
+  } catch(e) { console.error('adsgram interstitial init', e); }
+}
+function captchaShowInterstitial() {
+  captchaInterstitialInit();
+  if (_captchaInterstitialController) { try { _captchaInterstitialController.show().catch(()=>{}); } catch(e) {} }
+}
+
 
 function captchaGenerateExample() {
   const a = Math.floor(Math.random() * CAPTCHA_MAX_DIGIT);
@@ -2250,15 +2319,18 @@ async function captchaUpdateProgress() {
 
 async function openCaptchaModal() {
   document.getElementById('captcha-modal').classList.add('active');
+  updateCaptchaTexts();
   await captchaUpdateProgress();
   captchaGenerateExample();
   refreshCaptchaAdSlots();
+  captchaInterstitialInit();
 }
 function closeCaptchaModal() {
   document.getElementById('captcha-modal').classList.remove('active');
 }
 
 async function submitCaptchaAnswer() {
+  captchaShowInterstitial();
   const inp = document.getElementById('captcha-answer-input');
   const fb = document.getElementById('captcha-feedback');
   const given = parseInt(inp?.value, 10);
@@ -2287,6 +2359,103 @@ async function submitCaptchaAnswer() {
   await captchaUpdateProgress();
   captchaGenerateExample();
   refreshCaptchaAdSlots();
+}
+
+// ═══ ЕЖЕДНЕВНЫЙ БОНУС: 7-дневный цикл, 100 монет/день, 200 монет на 7-й день ═══
+// Монеты хранятся отдельно от денежного баланса (пока локально на устройстве) —
+// в будущем планируется обмен монет на денежные купоны для вывода.
+function dailyBonusDayReward(day) { return day >= 7 ? 200 : 100; }
+function dailyBonusTodayStr() {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`;
+}
+function dailyBonusYesterdayStr() {
+  const d = new Date(); d.setUTCDate(d.getUTCDate() - 1);
+  return `${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`;
+}
+function dailyBonusKeys(uid) {
+  return {
+    coins: `earnuz_bonus_coins_${uid}`,
+    day: `earnuz_bonus_day_${uid}`,
+    last: `earnuz_bonus_last_${uid}`
+  };
+}
+function dailyBonusGetState(uid) {
+  const k = dailyBonusKeys(uid);
+  let coins = 0, day = 0, last = '';
+  try { coins = parseInt(localStorage.getItem(k.coins) || '0') || 0; } catch(e) {}
+  try { day = parseInt(localStorage.getItem(k.day) || '0') || 0; } catch(e) {}
+  try { last = localStorage.getItem(k.last) || ''; } catch(e) {}
+  return { coins, day, last };
+}
+function dailyBonusSaveState(uid, st) {
+  const k = dailyBonusKeys(uid);
+  try {
+    localStorage.setItem(k.coins, String(st.coins));
+    localStorage.setItem(k.day, String(st.day));
+    localStorage.setItem(k.last, st.last);
+  } catch(e) {}
+}
+function dailyBonusClaimedToday(st) { return st.last === dailyBonusTodayStr(); }
+// день, который "активен" сегодня: уже полученный сегодня, либо следующий доступный
+function dailyBonusActiveDay(st) {
+  if (dailyBonusClaimedToday(st)) return st.day || 1;
+  if (st.last === dailyBonusYesterdayStr() && st.day >= 1) return (st.day % 7) + 1;
+  return 1;
+}
+async function dailyBonusUpdateCoinUI() {
+  const uid = await getMyUserId();
+  const coins = uid ? dailyBonusGetState(uid).coins : 0;
+  const txt = coins.toLocaleString('ru-RU') + ' ' + L('монет','tanga');
+  const homeLine = document.getElementById('home-coin-line');
+  if (homeLine) homeLine.innerHTML = '🪙 ' + txt;
+  const wdLine = document.getElementById('wd-bonus-coins');
+  if (wdLine) wdLine.innerHTML = '🪙 ' + txt;
+}
+function dailyBonusGridHTML(st) {
+  const activeDay = dailyBonusActiveDay(st);
+  const claimedToday = dailyBonusClaimedToday(st);
+  let html = '<div class="db-grid">';
+  for (let d = 1; d <= 7; d++) {
+    let cls = 'db-day';
+    let mark = '';
+    if (d < activeDay || (d === activeDay && claimedToday)) { cls += d === activeDay ? ' db-claimed-today' : ' db-past'; mark = '✓ '; }
+    else if (d === activeDay) { cls += ' db-current'; }
+    html += `<div class="${cls}"><div class="db-num">${L('День','Kun')} ${d}</div><div class="db-coin">${mark}🪙${dailyBonusDayReward(d)}</div></div>`;
+  }
+  html += '</div>';
+  return html;
+}
+async function openDailyBonusModal() {
+  const uid = await getMyUserId();
+  const st = uid ? dailyBonusGetState(uid) : { coins:0, day:0, last:'' };
+  const claimedToday = dailyBonusClaimedToday(st);
+  const grid = dailyBonusGridHTML(st);
+  const note = `<div class="db-total">🪙 ${L('Всего накоплено','Jami to\'plangan')}: ${st.coins.toLocaleString('ru-RU')}</div>` + grid +
+    `<div class="db-note">${L('Заходи каждый день и забирай монеты — на 7-й день получишь 200! Совсем скоро эти монеты можно будет поменять на денежные купоны для вывода. Копи их!','Har kuni kiring va tangalarni oling — 7-kunda 200 ta olasiz! Tez orada bu tangalarni chiqarish uchun pul kuponlariga almashtirish mumkin bo\'ladi. Ularni to\'plang!')}</div>`;
+  showConfirm({
+    icon: '🎁',
+    title: L('Ежедневный бонус','Kunlik bonus'),
+    text: '',
+    breakdown: note,
+    hideCancel: claimedToday,
+    okLabel: claimedToday ? L('Приходи завтра','Ertaga keling') : L('Забрать бонус','Bonusni olish'),
+    onConfirm: claimedToday ? (()=>{}) : dailyBonusClaim
+  });
+}
+async function dailyBonusClaim() {
+  const uid = await getMyUserId();
+  if (!uid) return;
+  const st = dailyBonusGetState(uid);
+  if (dailyBonusClaimedToday(st)) { showToast(L('Бонус уже получен сегодня — приходи завтра','Bonus bugun allaqachon olindi — ertaga keling')); return; }
+  const nextDay = dailyBonusActiveDay(st);
+  const reward = dailyBonusDayReward(nextDay);
+  st.coins += reward;
+  st.day = nextDay;
+  st.last = dailyBonusTodayStr();
+  dailyBonusSaveState(uid, st);
+  dailyBonusUpdateCoinUI();
+  showToast('🪙 +' + reward + ' ' + L('монет начислено!','tanga hisoblandi!'));
 }
 
 // ═══ MONETAG (Задание 2): rewarded interstitial ═══
@@ -2800,6 +2969,7 @@ async function dbRefreshBalance() {
   if (chip) chip.textContent = bal;
   const wd = document.getElementById('wd-available');
   if (wd) wd.textContent = bal;
+  dailyBonusUpdateCoinUI();
 }
 
 async function dbSubmitReport(comment) {
@@ -4160,6 +4330,7 @@ function updateMoneyLabels() {
     const pre = el.dataset.prefix || '';
     el.textContent = pre + fmtMoney(usd);
   });
+  updateCaptchaTexts();
 }
 
 // нормализация ссылки: добавляем https:// если протокола нет (иначе Telegram откроет её относительно нашего домена → 404)
