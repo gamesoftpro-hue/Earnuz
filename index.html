@@ -2294,7 +2294,10 @@ function captchaInterstitialInit() {
 }
 function captchaShowInterstitial() {
   captchaInterstitialInit();
-  if (_captchaInterstitialController) { try { _captchaInterstitialController.show().catch(()=>{}); } catch(e) {} }
+  if (_captchaInterstitialController) {
+    try { _captchaInterstitialController.show().catch((e) => console.warn('adsgram interstitial skipped/failed', e)); }
+    catch(e) { console.error('adsgram interstitial show', e); }
+  }
 }
 
 
@@ -2364,14 +2367,18 @@ async function submitCaptchaAnswer() {
 // ═══ ЕЖЕДНЕВНЫЙ БОНУС: 7-дневный цикл, 100 монет/день, 200 монет на 7-й день ═══
 // Монеты хранятся отдельно от денежного баланса (пока локально на устройстве) —
 // в будущем планируется обмен монет на денежные купоны для вывода.
-function dailyBonusDayReward(day) { return day >= 7 ? 200 : 100; }
-function dailyBonusTodayStr() {
-  const d = new Date();
-  return `${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`;
+const DAILY_BONUS_REGULAR_REWARD = 100;
+const DAILY_BONUS_SEVENTH_DAY_REWARD = 200;
+function dailyBonusDayReward(day) { return day >= 7 ? DAILY_BONUS_SEVENTH_DAY_REWARD : DAILY_BONUS_REGULAR_REWARD; }
+function dailyBonusDateStr(d) {
+  const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+  const dd = String(d.getUTCDate()).padStart(2,'0');
+  return `${d.getUTCFullYear()}-${mm}-${dd}`;
 }
+function dailyBonusTodayStr() { return dailyBonusDateStr(new Date()); }
 function dailyBonusYesterdayStr() {
   const d = new Date(); d.setUTCDate(d.getUTCDate() - 1);
-  return `${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`;
+  return dailyBonusDateStr(d);
 }
 function dailyBonusKeys(uid) {
   return {
@@ -2412,20 +2419,24 @@ async function dailyBonusUpdateCoinUI() {
   const wdLine = document.getElementById('wd-bonus-coins');
   if (wdLine) wdLine.innerHTML = '🪙 ' + txt;
 }
+// определяет визуальное состояние ячейки дня: прошедший / текущий (получен сегодня) / текущий (доступен) / будущий
+function dailyBonusDayState(d, activeDay, claimedToday) {
+  if (d < activeDay) return { cls: 'db-day db-past', mark: '✓ ' };
+  if (d === activeDay) return claimedToday ? { cls: 'db-day db-claimed-today', mark: '✓ ' } : { cls: 'db-day db-current', mark: '' };
+  return { cls: 'db-day', mark: '' };
+}
 function dailyBonusGridHTML(st) {
   const activeDay = dailyBonusActiveDay(st);
   const claimedToday = dailyBonusClaimedToday(st);
   let html = '<div class="db-grid">';
   for (let d = 1; d <= 7; d++) {
-    let cls = 'db-day';
-    let mark = '';
-    if (d < activeDay || (d === activeDay && claimedToday)) { cls += d === activeDay ? ' db-claimed-today' : ' db-past'; mark = '✓ '; }
-    else if (d === activeDay) { cls += ' db-current'; }
+    const { cls, mark } = dailyBonusDayState(d, activeDay, claimedToday);
     html += `<div class="${cls}"><div class="db-num">${L('День','Kun')} ${d}</div><div class="db-coin">${mark}🪙${dailyBonusDayReward(d)}</div></div>`;
   }
   html += '</div>';
   return html;
 }
+function dailyBonusNoop() {}
 async function openDailyBonusModal() {
   const uid = await getMyUserId();
   const st = uid ? dailyBonusGetState(uid) : { coins:0, day:0, last:'' };
@@ -2440,7 +2451,7 @@ async function openDailyBonusModal() {
     breakdown: note,
     hideCancel: claimedToday,
     okLabel: claimedToday ? L('Приходи завтра','Ertaga keling') : L('Забрать бонус','Bonusni olish'),
-    onConfirm: claimedToday ? (()=>{}) : dailyBonusClaim
+    onConfirm: claimedToday ? dailyBonusNoop : dailyBonusClaim
   });
 }
 async function dailyBonusClaim() {
