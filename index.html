@@ -786,7 +786,7 @@ body.employer .home-hero { margin-bottom: 22px; }
       <div class="onb-feat"><div class="onb-feat-ic">💸</div><div data-ru="Вывод на Uzcard, Humo, USDT" data-uz="Uzcard, Humo, USDT ga chiqarish">Вывод на Uzcard, Humo, USDT</div></div>
       <div class="onb-feat"><div class="onb-feat-ic">👥</div><div data-ru="Доход с приглашённых друзей" data-uz="Taklif qilingan do'stlardan daromad">Доход с приглашённых друзей</div></div>
     </div>
-    <button class="btn-primary" style="max-width:340px" onclick="onbNext(3)" data-ru="Далее" data-uz="Keyingi">Далее</button>
+    <button class="btn-primary" style="max-width:340px" onclick="onbGuideBeforeForm()" data-ru="Далее" data-uz="Keyingi">Далее</button>
   </div>
 
   <!-- Step 3: Rules + Telegram login -->
@@ -1611,7 +1611,11 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-live-tasks"></div>
   </div>
   <div class="admin-section" id="admin-payouts"><div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-pay-list"></div></div>
-  <div class="admin-section" id="admin-deposits"><div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-deposit-list"></div></div>
+  <div class="admin-section" id="admin-deposits">
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-deposit-list"></div>
+    <div style="padding:0 20px 8px"><div class="sec-title" data-ru="История пополнений (включая автоматические через ⭐ Stars)" data-uz="To'ldirishlar tarixi (⭐ Stars orqali avtomatik ham)">История пополнений (включая автоматические через ⭐ Stars)</div></div>
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-deposit-history-list"></div>
+  </div>
 
   <div class="admin-section" id="admin-users">
     <div style="padding:0 20px 12px">
@@ -1669,27 +1673,32 @@ body.employer .home-hero { margin-bottom: 22px; }
 
     <div class="rule-card">
       <div class="rule-title" data-ru="Как работает EarnUp" data-uz="EarnUp qanday ishlaydi">Как работает EarnUp</div>
-      <div class="rule-text" data-ru="EarnUp — это площадка, где заказчики размещают задания, а исполнители выполняют их за вознаграждение. Сервис берёт комиссию 17% с каждого задания." data-uz="EarnUp — bu buyurtmachilar topshiriqlarni joylashtiradigan, ijrochilar esa ularni mukofot evaziga bajaradigan platforma. Servis har bir topshiriqdan 17% komissiya oladi.">EarnUp — это площадка, где заказчики размещают задания, а исполнители выполняют их за вознаграждение. Сервис берёт комиссию 17% с каждого задания.</div>
+      <div class="rule-text" data-ru="EarnUp — это площадка, где заказчики размещают задания (подписки, отзывы, установки, опросы и другое), а исполнители выполняют их и получают за это деньги. Сервис берёт небольшую комиссию с каждого оплаченного задания — она уже включена в бюджет заказчика и не уменьшает выплату исполнителю." data-uz="EarnUp — bu buyurtmachilar topshiriqlar (obunalar, sharhlar, o'rnatishlar, so'rovlar va boshqalar) joylashtiradigan, ijrochilar esa ularni bajarib pul topadigan platforma. Servis har bir to'langan topshiriqdan ozgina komissiya oladi — u buyurtmachi byudjetiga allaqachon kiritilgan va ijrochi to'lovini kamaytirmaydi.">EarnUp — это площадка, где заказчики размещают задания (подписки, отзывы, установки, опросы и другое), а исполнители выполняют их и получают за это деньги. Сервис берёт небольшую комиссию с каждого оплаченного задания — она уже включена в бюджет заказчика и не уменьшает выплату исполнителю.</div>
+      <button class="btn-secondary" style="margin-top:12px" onclick="guideShow()" data-ru="🎓 Посмотреть начальный туториал" data-uz="🎓 Boshlang'ich tutorialni ko'rish">🎓 Посмотреть начальный туториал</button>
     </div>
 
     <div class="rule-card">
       <div class="rule-title" data-ru="Для исполнителей" data-uz="Ijrochilar uchun">Для исполнителей</div>
-      <div class="rule-text" data-ru="1. Выбери задание в нужном отделе.&#10;2. Нажми «Начать выполнение» — запустится таймер.&#10;3. Выполни задание по инструкции в отведённое время.&#10;4. Загрузи скриншот или видео и отправь на проверку.&#10;5. После одобрения деньги поступят на баланс.&#10;6. Выводи средства от 5 $ на карту или USDT." data-uz="1. Kerakli bo'limdan topshiriq tanlang.&#10;2. «Bajarishni boshlash» tugmasini bosing — taymer ishga tushadi.&#10;3. Ko'rsatma bo'yicha belgilangan vaqtda bajaring.&#10;4. Skrinshot yoki video yuklang va tekshirishga yuboring.&#10;5. Tasdiqlangandan keyin pul balansga tushadi.&#10;6. 5 $dan kartaga yoki USDT chiqaring.">1. Выбери задание в нужном отделе.
-2. Нажми «Начать выполнение» — запустится таймер.
-3. Выполни задание по инструкции в отведённое время.
-4. Загрузи скриншот или видео и отправь на проверку.
-5. После одобрения деньги поступят на баланс.
-6. Выводи средства от 5 $ на карту или USDT.</div>
+      <div class="rule-text" data-ru="1. Выбери задание в «Лёгком заработке» или на «Бирже заданий».&#10;2. Нажми «Начать выполнение» — запустится таймер на выполнение.&#10;3. Выполни задание строго по инструкции в отведённое время.&#10;4. Загрузи скриншот или видео-подтверждение и отправь на проверку.&#10;5. Заказчик проверяет отчёт: одобряет, отправляет на доработку с комментарием или отклоняет с указанием причины.&#10;6. Если заказчик не проверил отчёт за 24 часа — задание засчитывается автоматически, и деньги поступают на баланс.&#10;7. Если не согласен с отклонением — можно оспорить решение через поддержку.&#10;8. Выводи заработанное на карту Uzcard/Humo, USDT или Telegram Stars — минимальная сумма вывода 5 $." data-uz="1. «Tezkor daromad» yoki «Topshiriqlar birjasi»dan topshiriq tanlang.&#10;2. «Bajarishni boshlash»ni bosing — bajarish uchun taymer ishga tushadi.&#10;3. Ko'rsatmaga qat'iy rioya qilib, belgilangan vaqtda bajaring.&#10;4. Skrinshot yoki video-tasdiq yuklang va tekshiruvga yuboring.&#10;5. Buyurtmachi hisobotni tekshiradi: tasdiqlaydi, izoh bilan qayta ishlashga yuboradi yoki sababini ko'rsatib rad etadi.&#10;6. Agar buyurtmachi 24 soat ichida tekshirmasa — topshiriq avtomatik hisoblanadi va pul balansga tushadi.&#10;7. Rad etish bilan rozi bo'lmasangiz — qo'llab-quvvatlash orqali e'tiroz bildirishingiz mumkin.&#10;8. Topgan pulingizni Uzcard/Humo kartasiga, USDT yoki Telegram Stars orqali yeching — minimal summa 5 $.">1. Выбери задание в «Лёгком заработке» или на «Бирже заданий».
+2. Нажми «Начать выполнение» — запустится таймер на выполнение.
+3. Выполни задание строго по инструкции в отведённое время.
+4. Загрузи скриншот или видео-подтверждение и отправь на проверку.
+5. Заказчик проверяет отчёт: одобряет, отправляет на доработку с комментарием или отклоняет с указанием причины.
+6. Если заказчик не проверил отчёт за 24 часа — задание засчитывается автоматически, и деньги поступают на баланс.
+7. Если не согласен с отклонением — можно оспорить решение через поддержку.
+8. Выводи заработанное на карту Uzcard/Humo, USDT или Telegram Stars — минимальная сумма вывода 5 $.</div>
     </div>
 
     <div class="rule-card">
       <div class="rule-title" data-ru="Для заказчиков" data-uz="Buyurtmachilar uchun">Для заказчиков</div>
-      <div class="rule-text" data-ru="1. Пополни баланс кабинета.&#10;2. Создай задание: укажи отдел, ссылку, инструкцию, оплату, количество и время выполнения.&#10;3. Настрой требования: пол, возраст, географию.&#10;4. Выбери тип подтверждения или включи авто-одобрение.&#10;5. Опубликуй — задание пройдёт модерацию.&#10;6. Проверяй отчёты и следи за статистикой." data-uz="1. Kabinet balansini to'ldiring.&#10;2. Topshiriq yarating: bo'lim, havola, ko'rsatma, to'lov, miqdor va bajarish vaqtini ko'rsating.&#10;3. Talablarni sozlang: jins, yosh, geografiya.&#10;4. Tasdiqlash turini tanlang yoki avto-tasdiqni yoqing.&#10;5. E'lon qiling — topshiriq moderatsiyadan o'tadi.&#10;6. Hisobotlarni tekshiring va statistikani kuzating.">1. Пополни баланс кабинета.
-2. Создай задание: укажи отдел, ссылку, инструкцию, оплату, количество и время выполнения.
-3. Настрой требования: пол, возраст, географию.
-4. Выбери тип подтверждения или включи авто-одобрение.
-5. Опубликуй — задание пройдёт модерацию.
-6. Проверяй отчёты и следи за статистикой.</div>
+      <div class="rule-text" data-ru="1. Пополни баланс кабинета — картой, USDT/TON или Telegram Stars.&#10;2. Создай задание: укажи отдел, ссылку, пошаговую инструкцию, оплату за выполнение, количество и время на выполнение.&#10;3. Настрой требования к исполнителям: пол, возраст, география, языки — и дневной лимит при необходимости.&#10;4. Опубликуй — задание пройдёт быструю модерацию перед показом исполнителям.&#10;5. Проверяй присланные отчёты вовремя: одобряй и выплачивай, отправляй на доработку с комментарием или отклоняй с указанием причины.&#10;6. Если не проверить отчёт за 24 часа — он засчитается автоматически.&#10;7. При удалении или остановке задания на баланс возвращается только неиспользованный остаток бюджета (за ещё не выполненные и не оплаченные места) — уже выплаченное исполнителям не возвращается.&#10;8. Следи за статистикой в разделе «Статистика»: сколько потрачено, сколько выполнений, процент одобрений." data-uz="1. Kabinet balansini to'ldiring — karta, USDT/TON yoki Telegram Stars orqali.&#10;2. Topshiriq yarating: bo'lim, havola, bosqichma-bosqich ko'rsatma, bajarish uchun to'lov, miqdor va bajarish vaqtini kiriting.&#10;3. Ijrochilarga talablarni sozlang: jins, yosh, geografiya, tillar — va zarur bo'lsa kunlik limit.&#10;4. E'lon qiling — topshiriq ijrochilarga ko'rsatilishidan oldin tezkor moderatsiyadan o'tadi.&#10;5. Kelgan hisobotlarni o'z vaqtida tekshiring: tasdiqlab to'lang, izoh bilan qayta ishlashga yuboring yoki sababini ko'rsatib rad eting.&#10;6. Agar hisobotni 24 soat ichida tekshirmasangiz — u avtomatik hisoblanadi.&#10;7. Topshiriqni o'chirish yoki to'xtatishda balansga faqat ishlatilmagan byudjet qoldig'i (hali bajarilmagan va to'lanmagan joylar uchun) qaytadi — ijrochilarga allaqachon to'langan summa qaytmaydi.&#10;8. «Statistika» bo'limida kuzating: qancha sarflandi, nechta bajarildi, tasdiqlash foizi.">1. Пополни баланс кабинета — картой, USDT/TON или Telegram Stars.
+2. Создай задание: укажи отдел, ссылку, пошаговую инструкцию, оплату за выполнение, количество и время на выполнение.
+3. Настрой требования к исполнителям: пол, возраст, география, языки — и дневной лимит при необходимости.
+4. Опубликуй — задание пройдёт быструю модерацию перед показом исполнителям.
+5. Проверяй присланные отчёты вовремя: одобряй и выплачивай, отправляй на доработку с комментарием или отклоняй с указанием причины.
+6. Если не проверить отчёт за 24 часа — он засчитается автоматически.
+7. При удалении или остановке задания на баланс возвращается только неиспользованный остаток бюджета (за ещё не выполненные и не оплаченные места) — уже выплаченное исполнителям не возвращается.
+8. Следи за статистикой в разделе «Статистика»: сколько потрачено, сколько выполнений, процент одобрений.</div>
     </div>
 
     <div class="rule-card">
@@ -3783,7 +3792,6 @@ async function onbFinish() {
     }
     document.getElementById('onboarding').classList.add('hidden');
     refCheckInvite();
-    if (res.isNew) setTimeout(guideShow, 400);
     showToast(res.isNew
       ? L('🎉 Аккаунт создан в базе!','🎉 Akkaunt bazada yaratildi!')
       : L('👋 С возвращением!','👋 Qaytib kelganingiz bilan!'));
@@ -4886,6 +4894,23 @@ async function dbLoadAdminDeposits() {
         <button class="admin-btn red small" onclick="admRejectDeposit(${i})">${L('Отклонить','Rad etish')}</button>
       </div>
     </div>`).join('') : `<div class="admin-empty">${L('Нет заявок на пополнение','To\'ldirish arizalari yo\'q')}</div>`;
+  dbLoadAdminDepositHistory();
+}
+// история пополнений: и ручные (проверенные админом), и автоматические через Telegram Stars —
+// автопополнения звёздами сразу становятся completed (без очереди на подтверждение) и раньше нигде не были видны админу
+async function dbLoadAdminDepositHistory() {
+  const h = document.getElementById('adm-deposit-history-list');
+  if (!h) return;
+  const { data } = await sb.from('deposits').select('*, users(name, telegram_id)').in('status',['completed','rejected']).order('created_at',{ascending:false}).limit(60);
+  h.innerHTML = (data&&data.length) ? data.map(d => {
+    const isStars = d.method==='stars';
+    const statusLabel = d.status==='completed' ? (isStars ? L('✅ Авто (⭐ Stars)','✅ Avto (⭐ Stars)') : L('✅ Зачислено','✅ Qo\'shildi')) : L('✕ Отклонено','✕ Rad etildi');
+    const statusColor = d.status==='completed' ? 'var(--green)' : 'var(--accent2)';
+    return `<div class="admin-mod-card">
+      <div class="admin-mod-name">${d.users?.name||'—'} <span style="font-size:10px;color:var(--muted)">TG ${d.users?.telegram_id||'—'}</span> <span style="float:right;font-size:11px;color:${statusColor};font-weight:700">${statusLabel}</span></div>
+      <div class="admin-mod-sub" style="margin-top:3px">${(d.amount||0).toLocaleString()} $${isStars?` (⭐ ${Math.round((d.amount||0)/0.013).toLocaleString('ru-RU')})`:''} · ${new Date(d.created_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`;
+  }).join('') : `<div class="admin-empty">${L('Пока нет истории','Hozircha tarix yo\'q')}</div>`;
 }
 function admToggleDep(i) {
   const d = document.getElementById('dep-details-'+i);
@@ -6055,9 +6080,10 @@ const GUIDE_SLIDES = [
   { icon:'🎉', title:'Добро пожаловать в EarnUp!', titleUz:'EarnUp\'ga xush kelibsiz!', text:'Платформа, где ты можешь выполнять лёгкие задания, получая за это деньги. А также разместить свои — для получения отзывов, лайков, регистраций и других задач.', textUz:'Bu — oson topshiriqlarni bajarib pul topishing mumkin bo\'lgan platforma. Shuningdek, o\'zingiz ham topshiriq joylashtirishingiz mumkin — sharh, layk, ro\'yxatdan o\'tish va boshqa vazifalar uchun.' },
   { icon:'🔄', title:'Два режима в одном', titleUz:'Bitta ilovada ikki rejim', text:'👷 <b>Исполнитель</b> — выполняй задания и получай деньги.<br><br>💼 <b>Заказчик</b> — размещай задания и получай трафик, подписки, отзывы.<br><br>Переключаться можно вверху экрана кнопкой «Сменить режим».', textUz:'👷 <b>Ijrochi</b> — topshiriqlarni bajarib pul oling.<br><br>💼 <b>Buyurtmachi</b> — topshiriq joylashtirib trafik, obuna, sharhlar oling.<br><br>Rejimni ekran tepasidagi «Rejimni almashtirish» tugmasi orqali almashtirishingiz mumkin.' },
   { icon:'📂', title:'Два раздела заданий', titleUz:'Ikki xil topshiriq bo\'limi', text:'<b>Быстрый заработок</b> — пополняется стабильно каждый день от платформы (реклама, партнёрские задания, опросы).<br><br><b>Биржа заданий</b> — приходят напрямую от заказчиков, которые размещают их через режим заказчика.<br><br>Совсем скоро тут будет ещё больше заданий!', textUz:'<b>Tezkor daromad</b> — platformadan har kuni barqaror to\'ldiriladi (reklama, hamkor topshiriqlari, so\'rovlar).<br><br><b>Topshiriqlar birjasi</b> — buyurtmachi rejimi orqali joylashtirilgan topshiriqlar.<br><br>Tez orada bu yerda yanada ko\'proq topshiriqlar bo\'ladi!' },
-  { icon:'💰', title:'Как заработать', titleUz:'Qanday pul topish mumkin', text:'1. Открой «Задания»<br>2. Выбери подходящее<br>3. Выполни и отправь на проверку<br>4. Заказчик проверит<br>5. Деньги придут на баланс', textUz:'1. «Topshiriqlar»ni oching<br>2. Mos keladiganini tanlang<br>3. Bajaring va tekshiruvga yuboring<br>4. Buyurtmachi tekshiradi<br>5. Pul balansingizga tushadi' },
-  { icon:'💸', title:'Вывод средств', titleUz:'Mablag\'ni yechish', text:'Выводи заработанное любым удобным способом! Профиль → Вывести → укажи реквизиты. Заявки обрабатываются вручную в течение 24 часов.', textUz:'Topgan pulingizni istalgan qulay usulda yeching! Profil → Yechish → rekvizitlaringizni kiriting. Arizalar 24 soat ichida qo\'lda ko\'rib chiqiladi.' },
-  { icon:'👥', title:'Приглашай друзей', titleUz:'Do\'stlaringizni taklif qiling', text:'Зови друзей по своей ссылке и получай 10% с их заработка.<br><br>Ознакомиться с правилами сервиса можно в настройках.', textUz:'Do\'stlaringizni havolangiz orqali taklif qiling va ularning daromadidan 10% oling.<br><br>Servis qoidalari bilan sozlamalarda tanishishingiz mumkin.' },
+  { icon:'💰', title:'Как заработать', titleUz:'Qanday pul topish mumkin', text:'1. Открой «Задания»<br>2. Выбери подходящее<br>3. Выполни и отправь на проверку<br>4. Заказчик проверит (или зачтётся автоматически через 24 часа)<br>5. Деньги придут на баланс', textUz:'1. «Topshiriqlar»ni oching<br>2. Mos keladiganini tanlang<br>3. Bajaring va tekshiruvga yuboring<br>4. Buyurtmachi tekshiradi (yoki 24 soatdan keyin avtomatik hisoblanadi)<br>5. Pul balansingizga tushadi' },
+  { icon:'💸', title:'Вывод средств', titleUz:'Mablag\'ni yechish', text:'Выводи заработанное любым удобным способом! Профиль → Вывести → укажи реквизиты (карта Uzcard/Humo, USDT или Telegram Stars). Минимум для вывода — 5 $. Заявки обрабатываются вручную в течение 24 часов.', textUz:'Topgan pulingizni istalgan qulay usulda yeching! Profil → Yechish → rekvizitlaringizni kiriting (Uzcard/Humo karta, USDT yoki Telegram Stars). Minimal summa — 5 $. Arizalar 24 soat ichida qo\'lda ko\'rib chiqiladi.' },
+  { icon:'💳', title:'Пополнение баланса', titleUz:'Balansni to\'ldirish', text:'Чтобы разместить своё задание в режиме «Заказчик», сначала пополни баланс кабинета — картой Uzcard/Visa, USDT/TON или Telegram Stars (зачисляется автоматически). Бюджет расходуется по мере выполнения заданий, а неиспользованный остаток всегда можно вернуть.', textUz:'«Buyurtmachi» rejimida topshiriq joylashtirish uchun avval kabinet balansini to\'ldiring — Uzcard/Visa kartasi, USDT/TON yoki Telegram Stars orqali (avtomatik hisoblanadi). Byudjet topshiriqlar bajarilishi bilan sarflanadi, ishlatilmagan qoldiqni istalgan vaqtda qaytarish mumkin.' },
+  { icon:'👥', title:'Приглашай друзей', titleUz:'Do\'stlaringizni taklif qiling', text:'Зови друзей по своей ссылке и получай 10% с их заработка — автоматически и навсегда.<br><br>Полные правила сервиса и этот туториал всегда можно открыть заново в настройках → «Правила и помощь».', textUz:'Do\'stlaringizni havolangiz orqali taklif qiling va ularning daromadidan 10% oling — avtomatik va doimiy.<br><br>Servis qoidalari va ushbu tutorialni istalgan vaqtda sozlamalar → «Qoidalar va yordam»da qayta ochishingiz mumkin.' },
 ];
 let _guideIdx = 0;
 function guideRender() {
@@ -6082,11 +6108,18 @@ function guideFinish() {
   document.getElementById('guide-overlay').style.display = 'none';
   try { localStorage.setItem('earnuz_guide_seen','1'); } catch(e){}
   if (currentUser) sb.from('users').update({ onboarding_seen: true }).eq('id', currentUser.id).then(()=>{});
+  // если туториал был показан перед анкетой при регистрации — продолжаем на анкету
+  if (window._guideThenOnboarding) { window._guideThenOnboarding = false; onbNext(3); }
 }
 function guideShow() {
   _guideIdx = 0;
   guideRender();
   document.getElementById('guide-overlay').style.display = 'flex';
+}
+// показать туториал перед анкетой (шаг регистрации) — так все новенькие точно видят обучение, а затем заполняют анкету
+function onbGuideBeforeForm() {
+  window._guideThenOnboarding = true;
+  guideShow();
 }
 function maybeShowGuide() {
   let seenLocal = false;
