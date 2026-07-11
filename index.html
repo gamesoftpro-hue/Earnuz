@@ -786,7 +786,7 @@ body.employer .home-hero { margin-bottom: 22px; }
       <div class="onb-feat"><div class="onb-feat-ic">💸</div><div data-ru="Вывод на Uzcard, Humo, USDT" data-uz="Uzcard, Humo, USDT ga chiqarish">Вывод на Uzcard, Humo, USDT</div></div>
       <div class="onb-feat"><div class="onb-feat-ic">👥</div><div data-ru="Доход с приглашённых друзей" data-uz="Taklif qilingan do'stlardan daromad">Доход с приглашённых друзей</div></div>
     </div>
-    <button class="btn-primary" style="max-width:340px" onclick="onbNext(3)" data-ru="Далее" data-uz="Keyingi">Далее</button>
+    <button class="btn-primary" style="max-width:340px" onclick="onbGuideBeforeForm()" data-ru="Далее" data-uz="Keyingi">Далее</button>
   </div>
 
   <!-- Step 3: Rules + Telegram login -->
@@ -1611,7 +1611,11 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-live-tasks"></div>
   </div>
   <div class="admin-section" id="admin-payouts"><div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-pay-list"></div></div>
-  <div class="admin-section" id="admin-deposits"><div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-deposit-list"></div></div>
+  <div class="admin-section" id="admin-deposits">
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-deposit-list"></div>
+    <div style="padding:0 20px 8px"><div class="sec-title" data-ru="История пополнений (включая автоматические через ⭐ Stars)" data-uz="To'ldirishlar tarixi (⭐ Stars orqali avtomatik ham)">История пополнений (включая автоматические через ⭐ Stars)</div></div>
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px" id="adm-deposit-history-list"></div>
+  </div>
 
   <div class="admin-section" id="admin-users">
     <div style="padding:0 20px 12px">
@@ -1669,27 +1673,32 @@ body.employer .home-hero { margin-bottom: 22px; }
 
     <div class="rule-card">
       <div class="rule-title" data-ru="Как работает EarnUp" data-uz="EarnUp qanday ishlaydi">Как работает EarnUp</div>
-      <div class="rule-text" data-ru="EarnUp — это площадка, где заказчики размещают задания, а исполнители выполняют их за вознаграждение. Сервис берёт комиссию 17% с каждого задания." data-uz="EarnUp — bu buyurtmachilar topshiriqlarni joylashtiradigan, ijrochilar esa ularni mukofot evaziga bajaradigan platforma. Servis har bir topshiriqdan 17% komissiya oladi.">EarnUp — это площадка, где заказчики размещают задания, а исполнители выполняют их за вознаграждение. Сервис берёт комиссию 17% с каждого задания.</div>
+      <div class="rule-text" data-ru="EarnUp — это площадка, где заказчики размещают задания (подписки, отзывы, установки, опросы и другое), а исполнители выполняют их и получают за это деньги. Сервис берёт небольшую комиссию с каждого оплаченного задания — она уже включена в бюджет заказчика и не уменьшает выплату исполнителю." data-uz="EarnUp — bu buyurtmachilar topshiriqlar (obunalar, sharhlar, o'rnatishlar, so'rovlar va boshqalar) joylashtiradigan, ijrochilar esa ularni bajarib pul topadigan platforma. Servis har bir to'langan topshiriqdan ozgina komissiya oladi — u buyurtmachi byudjetiga allaqachon kiritilgan va ijrochi to'lovini kamaytirmaydi.">EarnUp — это площадка, где заказчики размещают задания (подписки, отзывы, установки, опросы и другое), а исполнители выполняют их и получают за это деньги. Сервис берёт небольшую комиссию с каждого оплаченного задания — она уже включена в бюджет заказчика и не уменьшает выплату исполнителю.</div>
+      <button class="btn-secondary" style="margin-top:12px" onclick="guideShow()" data-ru="🎓 Посмотреть начальный туториал" data-uz="🎓 Boshlang'ich tutorialni ko'rish">🎓 Посмотреть начальный туториал</button>
     </div>
 
     <div class="rule-card">
       <div class="rule-title" data-ru="Для исполнителей" data-uz="Ijrochilar uchun">Для исполнителей</div>
-      <div class="rule-text" data-ru="1. Выбери задание в нужном отделе.&#10;2. Нажми «Начать выполнение» — запустится таймер.&#10;3. Выполни задание по инструкции в отведённое время.&#10;4. Загрузи скриншот или видео и отправь на проверку.&#10;5. После одобрения деньги поступят на баланс.&#10;6. Выводи средства от 5 $ на карту или USDT." data-uz="1. Kerakli bo'limdan topshiriq tanlang.&#10;2. «Bajarishni boshlash» tugmasini bosing — taymer ishga tushadi.&#10;3. Ko'rsatma bo'yicha belgilangan vaqtda bajaring.&#10;4. Skrinshot yoki video yuklang va tekshirishga yuboring.&#10;5. Tasdiqlangandan keyin pul balansga tushadi.&#10;6. 5 $dan kartaga yoki USDT chiqaring.">1. Выбери задание в нужном отделе.
-2. Нажми «Начать выполнение» — запустится таймер.
-3. Выполни задание по инструкции в отведённое время.
-4. Загрузи скриншот или видео и отправь на проверку.
-5. После одобрения деньги поступят на баланс.
-6. Выводи средства от 5 $ на карту или USDT.</div>
+      <div class="rule-text" data-ru="1. Выбери задание в «Лёгком заработке» или на «Бирже заданий».&#10;2. Нажми «Начать выполнение» — запустится таймер на выполнение.&#10;3. Выполни задание строго по инструкции в отведённое время.&#10;4. Загрузи скриншот или видео-подтверждение и отправь на проверку.&#10;5. Заказчик проверяет отчёт: одобряет, отправляет на доработку с комментарием или отклоняет с указанием причины.&#10;6. Если заказчик не проверил отчёт за 24 часа — задание засчитывается автоматически, и деньги поступают на баланс.&#10;7. Если не согласен с отклонением — можно оспорить решение через поддержку.&#10;8. Выводи заработанное на карту Uzcard/Humo, USDT или Telegram Stars — минимальная сумма вывода 5 $." data-uz="1. «Tezkor daromad» yoki «Topshiriqlar birjasi»dan topshiriq tanlang.&#10;2. «Bajarishni boshlash»ni bosing — bajarish uchun taymer ishga tushadi.&#10;3. Ko'rsatmaga qat'iy rioya qilib, belgilangan vaqtda bajaring.&#10;4. Skrinshot yoki video-tasdiq yuklang va tekshiruvga yuboring.&#10;5. Buyurtmachi hisobotni tekshiradi: tasdiqlaydi, izoh bilan qayta ishlashga yuboradi yoki sababini ko'rsatib rad etadi.&#10;6. Agar buyurtmachi 24 soat ichida tekshirmasa — topshiriq avtomatik hisoblanadi va pul balansga tushadi.&#10;7. Rad etish bilan rozi bo'lmasangiz — qo'llab-quvvatlash orqali e'tiroz bildirishingiz mumkin.&#10;8. Topgan pulingizni Uzcard/Humo kartasiga, USDT yoki Telegram Stars orqali yeching — minimal summa 5 $.">1. Выбери задание в «Лёгком заработке» или на «Бирже заданий».
+2. Нажми «Начать выполнение» — запустится таймер на выполнение.
+3. Выполни задание строго по инструкции в отведённое время.
+4. Загрузи скриншот или видео-подтверждение и отправь на проверку.
+5. Заказчик проверяет отчёт: одобряет, отправляет на доработку с комментарием или отклоняет с указанием причины.
+6. Если заказчик не проверил отчёт за 24 часа — задание засчитывается автоматически, и деньги поступают на баланс.
+7. Если не согласен с отклонением — можно оспорить решение через поддержку.
+8. Выводи заработанное на карту Uzcard/Humo, USDT или Telegram Stars — минимальная сумма вывода 5 $.</div>
     </div>
 
     <div class="rule-card">
       <div class="rule-title" data-ru="Для заказчиков" data-uz="Buyurtmachilar uchun">Для заказчиков</div>
-      <div class="rule-text" data-ru="1. Пополни баланс кабинета.&#10;2. Создай задание: укажи отдел, ссылку, инструкцию, оплату, количество и время выполнения.&#10;3. Настрой требования: пол, возраст, географию.&#10;4. Выбери тип подтверждения или включи авто-одобрение.&#10;5. Опубликуй — задание пройдёт модерацию.&#10;6. Проверяй отчёты и следи за статистикой." data-uz="1. Kabinet balansini to'ldiring.&#10;2. Topshiriq yarating: bo'lim, havola, ko'rsatma, to'lov, miqdor va bajarish vaqtini ko'rsating.&#10;3. Talablarni sozlang: jins, yosh, geografiya.&#10;4. Tasdiqlash turini tanlang yoki avto-tasdiqni yoqing.&#10;5. E'lon qiling — topshiriq moderatsiyadan o'tadi.&#10;6. Hisobotlarni tekshiring va statistikani kuzating.">1. Пополни баланс кабинета.
-2. Создай задание: укажи отдел, ссылку, инструкцию, оплату, количество и время выполнения.
-3. Настрой требования: пол, возраст, географию.
-4. Выбери тип подтверждения или включи авто-одобрение.
-5. Опубликуй — задание пройдёт модерацию.
-6. Проверяй отчёты и следи за статистикой.</div>
+      <div class="rule-text" data-ru="1. Пополни баланс кабинета — картой, USDT/TON или Telegram Stars.&#10;2. Создай задание: укажи отдел, ссылку, пошаговую инструкцию, оплату за выполнение, количество и время на выполнение.&#10;3. Настрой требования к исполнителям: пол, возраст, география, языки — и дневной лимит при необходимости.&#10;4. Опубликуй — задание пройдёт быструю модерацию перед показом исполнителям.&#10;5. Проверяй присланные отчёты вовремя: одобряй и выплачивай, отправляй на доработку с комментарием или отклоняй с указанием причины.&#10;6. Если не проверить отчёт за 24 часа — он засчитается автоматически.&#10;7. При удалении или остановке задания на баланс возвращается только неиспользованный остаток бюджета (за ещё не выполненные и не оплаченные места) — уже выплаченное исполнителям не возвращается.&#10;8. Следи за статистикой в разделе «Статистика»: сколько потрачено, сколько выполнений, процент одобрений." data-uz="1. Kabinet balansini to'ldiring — karta, USDT/TON yoki Telegram Stars orqali.&#10;2. Topshiriq yarating: bo'lim, havola, bosqichma-bosqich ko'rsatma, bajarish uchun to'lov, miqdor va bajarish vaqtini kiriting.&#10;3. Ijrochilarga talablarni sozlang: jins, yosh, geografiya, tillar — va zarur bo'lsa kunlik limit.&#10;4. E'lon qiling — topshiriq ijrochilarga ko'rsatilishidan oldin tezkor moderatsiyadan o'tadi.&#10;5. Kelgan hisobotlarni o'z vaqtida tekshiring: tasdiqlab to'lang, izoh bilan qayta ishlashga yuboring yoki sababini ko'rsatib rad eting.&#10;6. Agar hisobotni 24 soat ichida tekshirmasangiz — u avtomatik hisoblanadi.&#10;7. Topshiriqni o'chirish yoki to'xtatishda balansga faqat ishlatilmagan byudjet qoldig'i (hali bajarilmagan va to'lanmagan joylar uchun) qaytadi — ijrochilarga allaqachon to'langan summa qaytmaydi.&#10;8. «Statistika» bo'limida kuzating: qancha sarflandi, nechta bajarildi, tasdiqlash foizi.">1. Пополни баланс кабинета — картой, USDT/TON или Telegram Stars.
+2. Создай задание: укажи отдел, ссылку, пошаговую инструкцию, оплату за выполнение, количество и время на выполнение.
+3. Настрой требования к исполнителям: пол, возраст, география, языки — и дневной лимит при необходимости.
+4. Опубликуй — задание пройдёт быструю модерацию перед показом исполнителям.
+5. Проверяй присланные отчёты вовремя: одобряй и выплачивай, отправляй на доработку с комментарием или отклоняй с указанием причины.
+6. Если не проверить отчёт за 24 часа — он засчитается автоматически.
+7. При удалении или остановке задания на баланс возвращается только неиспользованный остаток бюджета (за ещё не выполненные и не оплаченные места) — уже выплаченное исполнителям не возвращается.
+8. Следи за статистикой в разделе «Статистика»: сколько потрачено, сколько выполнений, процент одобрений.</div>
     </div>
 
     <div class="rule-card">
@@ -1899,12 +1908,16 @@ body.employer .home-hero { margin-bottom: 22px; }
       <textarea class="form-textarea" id="review-reason" style="height:72px;margin-bottom:0" data-placeholder-ru="Опишите, что не так..." data-placeholder-uz="Nima noto'g'ri ekanini yozing..." placeholder="Опишите, что не так..."></textarea>
     </div>
 
-    <div class="modal-actions">
+    <div class="modal-actions" id="review-actions-default">
       <button class="btn-primary" style="background:var(--green)" onclick="reviewAction('approve')" data-ru="Одобрить и выплатить" data-uz="Tasdiqlash va to'lash">Одобрить и выплатить</button>
       <div style="display:flex;gap:8px">
         <button class="btn-secondary" style="flex:1" onclick="reviewAction('rework')" data-ru="Доработать" data-uz="Qayta ishlash">Доработать</button>
         <button class="btn-secondary" style="flex:1;color:var(--accent2);border-color:rgba(255,101,132,0.3)" onclick="reviewAction('reject')" data-ru="Отклонить" data-uz="Rad etish">Отклонить</button>
       </div>
+    </div>
+    <div class="modal-actions" id="review-actions-confirm" style="display:none">
+      <button class="btn-primary" style="background:var(--accent)" onclick="reviewConfirmSend()" id="review-confirm-send-btn" data-ru="Отправить правки" data-uz="Tuzatishlarni yuborish">Отправить правки</button>
+      <button class="btn-secondary" onclick="reviewCancelReason()" data-ru="Отмена" data-uz="Bekor qilish">Отмена</button>
     </div>
   </div>
 </div>
@@ -2744,8 +2757,35 @@ async function dbLoadMyReports() {
     .eq('user_id', uid)
     .order('created_at',{ascending:false});
   if (error) { console.error('my reports', error.message); return; }
-  if (!data || !data.length) {
+  window._myReportsAll = data || [];
+  renderMyReportsList();
+}
+// фильтры «скрыть одобренные/отклонённые» — состояние хранится в localStorage
+function myReportsHideFlag(kind) { try { return localStorage.getItem('earnuz_myrep_hide_'+kind) === '1'; } catch(e) { return false; } }
+function toggleMyReportsHide(kind) {
+  const cur = myReportsHideFlag(kind);
+  try { localStorage.setItem('earnuz_myrep_hide_'+kind, cur ? '0' : '1'); } catch(e) {}
+  renderMyReportsList();
+}
+function renderMyReportsList() {
+  const c = document.getElementById('my-reports-list');
+  if (!c) return;
+  const all = window._myReportsAll || [];
+  const hideApproved = myReportsHideFlag('approved');
+  const hideRejected = myReportsHideFlag('rejected');
+  const data = all.filter(s => !((hideApproved && s.status==='approved') || (hideRejected && s.status==='rejected')));
+  const toolbar = `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:2px">
+    <button class="btn-secondary" style="flex:1;min-width:120px;padding:9px" onclick="dbLoadMyReports();showToast(L('🔄 Обновлено','🔄 Yangilandi'))">${L('🔄 Обновить','🔄 Yangilash')}</button>
+    <button class="btn-secondary" style="flex:1;min-width:120px;padding:9px" onclick="toggleMyReportsHide('approved')">${hideApproved ? L('👁 Показать одобренные','👁 Tasdiqlanganlarni ko\'rsatish') : L('🙈 Скрыть одобренные','🙈 Tasdiqlanganlarni yashirish')}</button>
+    <button class="btn-secondary" style="flex:1;min-width:120px;padding:9px" onclick="toggleMyReportsHide('rejected')">${hideRejected ? L('👁 Показать отклонённые','👁 Rad etilganlarni ko\'rsatish') : L('🙈 Скрыть отклонённые','🙈 Rad etilganlarni yashirish')}</button>
+    ${all.length ? `<button class="btn-secondary" style="flex:1;min-width:120px;padding:9px;color:var(--accent2);border-color:rgba(255,101,132,0.3)" onclick="clearMyReports()">${L('🧹 Очистить всё','🧹 Barchasini tozalash')}</button>` : ''}
+  </div>`;
+  if (!all.length) {
     c.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">${L('Пока нет отчётов','Hozircha hisobot yo\'q')}</div><div class="empty-text">${L('Выполни задание — отчёт появится здесь','Topshiriqni bajaring — hisobot shu yerda paydo bo\'ladi')}</div></div>`;
+    return;
+  }
+  if (!data.length) {
+    c.innerHTML = toolbar + `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">${L('Ничего не найдено','Hech narsa topilmadi')}</div><div class="empty-text">${L('Всё скрыто фильтрами выше','Yuqoridagi filtrlar hamma narsani yashirdi')}</div></div>`;
     return;
   }
   const pl = '$';
@@ -2758,7 +2798,7 @@ async function dbLoadMyReports() {
     expired: { ru:'⏰ Срок истёк', uz:'⏰ Muddat tugadi', cls:'' },
   };
   let _ackSet = new Set(); try { _ackSet = new Set(JSON.parse(localStorage.getItem('earnuz_rej_ack')||'[]')); } catch(e) {}
-  c.innerHTML = `<button class="btn-secondary" style="padding:9px;margin-bottom:2px" onclick="dbLoadMyReports();showToast(L('🔄 Обновлено','🔄 Yangilandi'))">${L('🔄 Обновить статусы','🔄 Holatlarni yangilash')}</button>` + data.map(s => {
+  c.innerHTML = toolbar + data.map(s => {
     const st = statusMap[s.status] || statusMap.pending;
     const title = s.tasks ? s.tasks.title : L('Задание','Topshiriq');
     const reward = s.tasks ? s.tasks.reward : 0;
@@ -2777,6 +2817,25 @@ async function dbLoadMyReports() {
       ${s.status==='pending' ? `<div style="font-size:11px;color:var(--muted);font-weight:300;line-height:1.5;margin-top:6px">${L('При отсутствии обратной связи от заказчика в течение 24 часов задание автоматически станет выполненным','Buyurtmachidan 24 soat ichida javob bo\'lmasa, topshiriq avtomatik bajarilgan hisoblanadi')}</div>` : ''}
     </div>`;
   }).join('');
+}
+
+// «Очистить всё» в Мои отчёты — реально удаляет все отчёты этого пользователя из БД
+async function clearMyReports() {
+  const uid = await getMyUserId();
+  if (!uid) return;
+  showConfirm({
+    icon:'🧹', danger:true,
+    title: L('Очистить все отчёты?','Barcha hisobotlarni tozalash?'),
+    text: L('Все ваши отчёты и их статусы будут удалены безвозвратно. Уже начисленные выплаты это не отменяет.','Barcha hisobotlaringiz butunlay o\'chiriladi. Bu allaqachon to\'langan pullarni bekor qilmaydi.'),
+    okLabel: L('Очистить','Tozalash'),
+    onConfirm: async () => {
+      const { error } = await sb.from('submissions').delete().eq('user_id', uid);
+      if (error) { showToast('⚠️ ' + error.message); return; }
+      window._myReportsAll = [];
+      renderMyReportsList();
+      showToast(L('Отчёты очищены','Tozalandi'));
+    }
+  });
 }
 
 // ═══ ИСТОРИЯ ПЕРЕПИСКИ по отчёту (хранится в submissions.history) ═══
@@ -2842,16 +2901,14 @@ async function openReportTask(taskId, status, subId) {
     const { data: t } = await sb.from('tasks').select('*').eq('id', taskId).single();
     if (!t || t.status !== 'active') { showToast(L('Задание больше недоступно','Topshiriq endi mavjud emas')); return; }
     if (!dbTasks.find(x=>x.id===t.id)) dbTasks.push(t);
-    showScreen('tasks', null, 1);
-    openDbTask(t.id);  // если таймер ещё идёт — откроется в режиме выполнения
+    openDbTask(t.id);  // если таймер ещё идёт — откроется в режиме выполнения; экран «Мои отчёты» остаётся фоном
     return;
   }
   // rejected: открываем задание заново — можно выполнить и отправить новый отчёт
   const { data: t } = await sb.from('tasks').select('*').eq('id', taskId).single();
   if (!t || t.status !== 'active') { showToast(L('Задание больше недоступно','Topshiriq endi mavjud emas')); return; }
   if (!dbTasks.find(x=>x.id===t.id)) dbTasks.push(t);
-  showScreen('tasks', null, 1);
-  openDbTask(t.id);
+  openDbTask(t.id);  // экран «Мои отчёты» остаётся фоном — после закрытия окна пользователь вернётся сюда же
 }
 
 // executor re-opens a rework task to redo it (строка НЕ удаляется — при отправке она обновится в pending)
@@ -2863,8 +2920,7 @@ async function dbResubmit(taskId) {
   const { data: t } = await sb.from('tasks').select('*').eq('id', taskId).single();
   if (!t || t.status !== 'active') { showToast(L('Задание больше недоступно','Topshiriq endi mavjud emas')); return; }
   if (!dbTasks.find(x=>x.id===t.id)) dbTasks.push(t);
-  showScreen('tasks', null, 1);
-  openDbTask(t.id);
+  openDbTask(t.id);  // экран «Мои отчёты» остаётся фоном — после закрытия окна пользователь вернётся сюда же
   // баннер с причиной + сразу открываем форму отчёта (скрины, текст)
   if (reason) {
     document.getElementById('rework-reason-text').textContent = reason;
@@ -3314,11 +3370,41 @@ async function dbOpenReview(subId) {
   // история переписки (прошлые отчёты и решения)
   const rh = document.getElementById('review-history');
   if (rh) rh.innerHTML = renderSubHistory(s);
-  document.getElementById('review-reason').value = '';
-  document.getElementById('review-reason-wrap').style.display = 'none';
+  resetReviewModalState();
   document.getElementById('review-modal').classList.add('active');
 }
 
+// сброс модалки проверки отчёта к исходному состоянию (3 кнопки, поле причины скрыто)
+function resetReviewModalState() {
+  const rr = document.getElementById('review-reason'); if (rr) rr.value = '';
+  const rw = document.getElementById('review-reason-wrap'); if (rw) rw.style.display = 'none';
+  const rDef = document.getElementById('review-actions-default'); if (rDef) rDef.style.display = '';
+  const rConf = document.getElementById('review-actions-confirm'); if (rConf) rConf.style.display = 'none';
+  window._reviewPendingAction = null;
+}
+// «Отмена» в режиме ввода причины — возвращаемся к исходным 3 кнопкам
+function reviewCancelReason() { resetReviewModalState(); }
+// показать кнопки «Отправить правки/отказ» + «Отмена» вместо стандартных трёх
+function showReviewConfirmRow(action) {
+  window._reviewPendingAction = action;
+  const rDef = document.getElementById('review-actions-default'); if (rDef) rDef.style.display = 'none';
+  const rConf = document.getElementById('review-actions-confirm'); if (rConf) rConf.style.display = '';
+  const sendBtn = document.getElementById('review-confirm-send-btn');
+  if (sendBtn) {
+    if (action === 'reject') {
+      sendBtn.style.background = 'var(--accent2)';
+      sendBtn.textContent = L('Отправить отказ','Rad etishni yuborish');
+    } else {
+      sendBtn.style.background = 'var(--accent)';
+      sendBtn.textContent = L('Отправить правки','Tuzatishlarni yuborish');
+    }
+  }
+}
+// клик по «Отправить правки/отказ» — продолжает действие, для которого уже открыто поле причины
+function reviewConfirmSend() {
+  if (!window._reviewPendingAction) return;
+  reviewAction(window._reviewPendingAction);
+}
 async function dbReviewAction(action) {
   if (!currentReviewSub) return;
   const reasonWrap = document.getElementById('review-reason-wrap');
@@ -3339,7 +3425,7 @@ async function dbReviewAction(action) {
     }
     dbRenderSubmissions('pending');
   } else {
-    if (reasonWrap.style.display === 'none') { reasonWrap.style.display = 'block'; showToast(L('✍️ Укажите причину','✍️ Sababni ko\'rsating')); return; }
+    if (reasonWrap.style.display === 'none') { reasonWrap.style.display = 'block'; showReviewConfirmRow(action); showToast(L('✍️ Укажите причину','✍️ Sababni ko\'rsating')); return; }
     if (!reason) { showToast(L('⚠️ Причина обязательна','⚠️ Sabab majburiy')); return; }
     const newStatus = action === 'reject' ? 'rejected' : 'rework';
     // rework limit: max 3 reworks, then employer must approve or reject
@@ -3350,6 +3436,7 @@ async function dbReviewAction(action) {
     const updFields = { status:newStatus, reject_reason:reason, reviewed_at:new Date().toISOString() };
     if (newStatus === 'rework') updFields.rework_count = (currentReviewSub.rework_count||0) + 1;
     await sb.from('submissions').update(updFields).eq('id', currentReviewSub.id);
+    resetReviewModalState();
     // уведомление исполнителю — сохраняем оба варианта языка, чтобы получатель видел на своём языке, а не на языке того, кто сейчас проверяет
     try {
       const nTitle = newStatus==='rejected' ? '✕ Отчёт отклонён' : '🔄 Нужна доработка';
@@ -3705,7 +3792,6 @@ async function onbFinish() {
     }
     document.getElementById('onboarding').classList.add('hidden');
     refCheckInvite();
-    if (res.isNew) setTimeout(guideShow, 400);
     showToast(res.isNew
       ? L('🎉 Аккаунт создан в базе!','🎉 Akkaunt bazada yaratildi!')
       : L('👋 С возвращением!','👋 Qaytib kelganingiz bilan!'));
@@ -4259,6 +4345,7 @@ async function submitTask() {
   activeRun = null; saveRun();
   document.getElementById('task-modal').classList.remove('active');
   showToast(L('✅ Отчёт отправлен на проверку!','✅ Hisobot tekshirishga yuborildi!'));
+  if (document.getElementById('screen-my-reports')?.classList.contains('active')) dbLoadMyReports();
 }
 function cancelTask() {
   clearInterval(_timerInterval);
@@ -4266,6 +4353,7 @@ function cancelTask() {
   activeRun = null; saveRun();
   document.getElementById('task-modal').classList.remove('active');
   showToast(L('Вы отказались от задания','Siz topshiriqdan voz kechdingiz'));
+  if (document.getElementById('screen-my-reports')?.classList.contains('active')) dbLoadMyReports();
 }
 
 // ═══ COMPLAINT ═══
@@ -4582,8 +4670,7 @@ function openReview(idx) {
   document.getElementById('review-time').textContent = (lang==='uz'?'Yuborilgan: ':'Отправлено: ') + (lang==='uz'?p.timeUz:p.time);
   const comment = lang==='uz'?p.commentUz:p.comment;
   document.getElementById('review-comment').textContent = comment || (lang==='uz'?'Без комментария':'Без комментария');
-  document.getElementById('review-reason').value = '';
-  document.getElementById('review-reason-wrap').style.display = 'none';
+  resetReviewModalState();
   document.getElementById('review-modal').classList.add('active');
 }
 
@@ -4600,6 +4687,7 @@ function reviewAction(action) {
     // reject or rework — reason required
     if (reasonWrap.style.display === 'none') {
       reasonWrap.style.display = 'block';
+      showReviewConfirmRow(action);
       showToast(L('✍️ Укажите причину','✍️ Sababni ko\'rsating'));
       return;
     }
@@ -4806,6 +4894,23 @@ async function dbLoadAdminDeposits() {
         <button class="admin-btn red small" onclick="admRejectDeposit(${i})">${L('Отклонить','Rad etish')}</button>
       </div>
     </div>`).join('') : `<div class="admin-empty">${L('Нет заявок на пополнение','To\'ldirish arizalari yo\'q')}</div>`;
+  dbLoadAdminDepositHistory();
+}
+// история пополнений: и ручные (проверенные админом), и автоматические через Telegram Stars —
+// автопополнения звёздами сразу становятся completed (без очереди на подтверждение) и раньше нигде не были видны админу
+async function dbLoadAdminDepositHistory() {
+  const h = document.getElementById('adm-deposit-history-list');
+  if (!h) return;
+  const { data } = await sb.from('deposits').select('*, users(name, telegram_id)').in('status',['completed','rejected']).order('created_at',{ascending:false}).limit(60);
+  h.innerHTML = (data&&data.length) ? data.map(d => {
+    const isStars = d.method==='stars';
+    const statusLabel = d.status==='completed' ? (isStars ? L('✅ Авто (⭐ Stars)','✅ Avto (⭐ Stars)') : L('✅ Зачислено','✅ Qo\'shildi')) : L('✕ Отклонено','✕ Rad etildi');
+    const statusColor = d.status==='completed' ? 'var(--green)' : 'var(--accent2)';
+    return `<div class="admin-mod-card">
+      <div class="admin-mod-name">${d.users?.name||'—'} <span style="font-size:10px;color:var(--muted)">TG ${d.users?.telegram_id||'—'}</span> <span style="float:right;font-size:11px;color:${statusColor};font-weight:700">${statusLabel}</span></div>
+      <div class="admin-mod-sub" style="margin-top:3px">${(d.amount||0).toLocaleString()} $${isStars?` (⭐ ${Math.round((d.amount||0)/0.013).toLocaleString('ru-RU')})`:''} · ${new Date(d.created_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`;
+  }).join('') : `<div class="admin-empty">${L('Пока нет истории','Hozircha tarix yo\'q')}</div>`;
 }
 function admToggleDep(i) {
   const d = document.getElementById('dep-details-'+i);
@@ -5975,9 +6080,10 @@ const GUIDE_SLIDES = [
   { icon:'🎉', title:'Добро пожаловать в EarnUp!', titleUz:'EarnUp\'ga xush kelibsiz!', text:'Платформа, где ты можешь выполнять лёгкие задания, получая за это деньги. А также разместить свои — для получения отзывов, лайков, регистраций и других задач.', textUz:'Bu — oson topshiriqlarni bajarib pul topishing mumkin bo\'lgan platforma. Shuningdek, o\'zingiz ham topshiriq joylashtirishingiz mumkin — sharh, layk, ro\'yxatdan o\'tish va boshqa vazifalar uchun.' },
   { icon:'🔄', title:'Два режима в одном', titleUz:'Bitta ilovada ikki rejim', text:'👷 <b>Исполнитель</b> — выполняй задания и получай деньги.<br><br>💼 <b>Заказчик</b> — размещай задания и получай трафик, подписки, отзывы.<br><br>Переключаться можно вверху экрана кнопкой «Сменить режим».', textUz:'👷 <b>Ijrochi</b> — topshiriqlarni bajarib pul oling.<br><br>💼 <b>Buyurtmachi</b> — topshiriq joylashtirib trafik, obuna, sharhlar oling.<br><br>Rejimni ekran tepasidagi «Rejimni almashtirish» tugmasi orqali almashtirishingiz mumkin.' },
   { icon:'📂', title:'Два раздела заданий', titleUz:'Ikki xil topshiriq bo\'limi', text:'<b>Быстрый заработок</b> — пополняется стабильно каждый день от платформы (реклама, партнёрские задания, опросы).<br><br><b>Биржа заданий</b> — приходят напрямую от заказчиков, которые размещают их через режим заказчика.<br><br>Совсем скоро тут будет ещё больше заданий!', textUz:'<b>Tezkor daromad</b> — platformadan har kuni barqaror to\'ldiriladi (reklama, hamkor topshiriqlari, so\'rovlar).<br><br><b>Topshiriqlar birjasi</b> — buyurtmachi rejimi orqali joylashtirilgan topshiriqlar.<br><br>Tez orada bu yerda yanada ko\'proq topshiriqlar bo\'ladi!' },
-  { icon:'💰', title:'Как заработать', titleUz:'Qanday pul topish mumkin', text:'1. Открой «Задания»<br>2. Выбери подходящее<br>3. Выполни и отправь на проверку<br>4. Заказчик проверит<br>5. Деньги придут на баланс', textUz:'1. «Topshiriqlar»ni oching<br>2. Mos keladiganini tanlang<br>3. Bajaring va tekshiruvga yuboring<br>4. Buyurtmachi tekshiradi<br>5. Pul balansingizga tushadi' },
-  { icon:'💸', title:'Вывод средств', titleUz:'Mablag\'ni yechish', text:'Выводи заработанное любым удобным способом! Профиль → Вывести → укажи реквизиты. Заявки обрабатываются вручную в течение 24 часов.', textUz:'Topgan pulingizni istalgan qulay usulda yeching! Profil → Yechish → rekvizitlaringizni kiriting. Arizalar 24 soat ichida qo\'lda ko\'rib chiqiladi.' },
-  { icon:'👥', title:'Приглашай друзей', titleUz:'Do\'stlaringizni taklif qiling', text:'Зови друзей по своей ссылке и получай 10% с их заработка.<br><br>Ознакомиться с правилами сервиса можно в настройках.', textUz:'Do\'stlaringizni havolangiz orqali taklif qiling va ularning daromadidan 10% oling.<br><br>Servis qoidalari bilan sozlamalarda tanishishingiz mumkin.' },
+  { icon:'💰', title:'Как заработать', titleUz:'Qanday pul topish mumkin', text:'1. Открой «Задания»<br>2. Выбери подходящее<br>3. Выполни и отправь на проверку<br>4. Заказчик проверит (или зачтётся автоматически через 24 часа)<br>5. Деньги придут на баланс', textUz:'1. «Topshiriqlar»ni oching<br>2. Mos keladiganini tanlang<br>3. Bajaring va tekshiruvga yuboring<br>4. Buyurtmachi tekshiradi (yoki 24 soatdan keyin avtomatik hisoblanadi)<br>5. Pul balansingizga tushadi' },
+  { icon:'💸', title:'Вывод средств', titleUz:'Mablag\'ni yechish', text:'Выводи заработанное любым удобным способом! Профиль → Вывести → укажи реквизиты (карта Uzcard/Humo, USDT или Telegram Stars). Минимум для вывода — 5 $. Заявки обрабатываются вручную в течение 24 часов.', textUz:'Topgan pulingizni istalgan qulay usulda yeching! Profil → Yechish → rekvizitlaringizni kiriting (Uzcard/Humo karta, USDT yoki Telegram Stars). Minimal summa — 5 $. Arizalar 24 soat ichida qo\'lda ko\'rib chiqiladi.' },
+  { icon:'💳', title:'Пополнение баланса', titleUz:'Balansni to\'ldirish', text:'Чтобы разместить своё задание в режиме «Заказчик», сначала пополни баланс кабинета — картой Uzcard/Visa, USDT/TON или Telegram Stars (зачисляется автоматически). Бюджет расходуется по мере выполнения заданий, а неиспользованный остаток всегда можно вернуть.', textUz:'«Buyurtmachi» rejimida topshiriq joylashtirish uchun avval kabinet balansini to\'ldiring — Uzcard/Visa kartasi, USDT/TON yoki Telegram Stars orqali (avtomatik hisoblanadi). Byudjet topshiriqlar bajarilishi bilan sarflanadi, ishlatilmagan qoldiqni istalgan vaqtda qaytarish mumkin.' },
+  { icon:'👥', title:'Приглашай друзей', titleUz:'Do\'stlaringizni taklif qiling', text:'Зови друзей по своей ссылке и получай 10% с их заработка — автоматически и навсегда.<br><br>Полные правила сервиса и этот туториал всегда можно открыть заново в настройках → «Правила и помощь».', textUz:'Do\'stlaringizni havolangiz orqali taklif qiling va ularning daromadidan 10% oling — avtomatik va doimiy.<br><br>Servis qoidalari va ushbu tutorialni istalgan vaqtda sozlamalar → «Qoidalar va yordam»da qayta ochishingiz mumkin.' },
 ];
 let _guideIdx = 0;
 function guideRender() {
@@ -6002,11 +6108,18 @@ function guideFinish() {
   document.getElementById('guide-overlay').style.display = 'none';
   try { localStorage.setItem('earnuz_guide_seen','1'); } catch(e){}
   if (currentUser) sb.from('users').update({ onboarding_seen: true }).eq('id', currentUser.id).then(()=>{});
+  // если туториал был показан перед анкетой при регистрации — продолжаем на анкету
+  if (window._guideThenOnboarding) { window._guideThenOnboarding = false; onbNext(3); }
 }
 function guideShow() {
   _guideIdx = 0;
   guideRender();
   document.getElementById('guide-overlay').style.display = 'flex';
+}
+// показать туториал перед анкетой (шаг регистрации) — так все новенькие точно видят обучение, а затем заполняют анкету
+function onbGuideBeforeForm() {
+  window._guideThenOnboarding = true;
+  guideShow();
 }
 function maybeShowGuide() {
   let seenLocal = false;
