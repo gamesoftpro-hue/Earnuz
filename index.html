@@ -2304,10 +2304,10 @@ const ADSGRAM_INTERSTITIAL_EVERY = 3;
 function adsgramInterstitialShouldShow(key) {
   try {
     const k = `earnuz_adsgram_int_${key}`;
-    const n = (parseInt(localStorage.getItem(k) || '0') || 0) + 1;
+    const n = (parseInt(localStorage.getItem(k), 10) || 0) + 1;
     localStorage.setItem(k, String(n));
     return (n % ADSGRAM_INTERSTITIAL_EVERY) === 0;
-  } catch(e) { return true; }
+  } catch(e) { return false; }
 }
 function captchaShowInterstitialThrottled(key) {
   if (adsgramInterstitialShouldShow(key)) captchaShowInterstitial();
