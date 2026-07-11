@@ -226,6 +226,10 @@ body {
   padding: 9px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif;
   display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
 }
+.captcha-ad-slot {
+  margin: 6px 20px; min-height: 60px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center;
+}
 .task-row {
   background: var(--surface); border-radius: var(--card-r); border: 1px solid var(--border);
   padding: 17px 18px; display: flex; align-items: center; gap: 12px; cursor: pointer;
@@ -990,6 +994,13 @@ body.employer .home-hero { margin-bottom: 22px; }
         <div slot="claim" class="svc-row-btn" style="display:block;width:100%;box-sizing:border-box;text-align:center;background:var(--green)" data-ru="Забрать" data-uz="Olish">Забрать</div>
         <div slot="done" class="svc-row-btn" style="display:block;width:100%;box-sizing:border-box;text-align:center;opacity:0.6" data-ru="Выполнено" data-uz="Bajarildi">Выполнено</div>
       </adsgram-task>
+    </div>
+    <div class="svc-row" style="margin-top:8px">
+      <div class="svc-row-info">
+        <div class="svc-row-title" data-ru="Ввод капчи за деньги" data-uz="Pul uchun captcha kiritish">Ввод капчи за деньги</div>
+        <div class="svc-row-sub" data-ru="200 сум за 10 капч · без ограничений" data-uz="10 captcha uchun 200 so'm · cheklovsiz">200 сум за 10 капч · без ограничений</div>
+      </div>
+      <button class="svc-row-btn" id="captcha-open-btn" onclick="openCaptchaModal()" data-ru="Начать" data-uz="Boshlash">Начать</button>
     </div>
   </div>
 
@@ -1855,6 +1866,33 @@ body.employer .home-hero { margin-bottom: 22px; }
 </div>
 
 <!-- ═══ OFFER end ═══ -->
+<!-- ═══ CAPTCHA TASK MODAL ═══ -->
+<div class="modal-overlay" id="captcha-modal" onclick="if(event.target.id==='captcha-modal')closeCaptchaModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" data-ru="Ввод капчи за деньги" data-uz="Pul uchun captcha kiritish">Ввод капчи за деньги</div>
+    <div style="padding:0 20px 10px;font-size:12px;color:var(--muted);line-height:1.5" data-ru="200 сум за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно." data-uz="Har 10 ta to'g'ri javob uchun 200 so'm. Noto'g'ri javob hisobga olinmaydi, lekin jarima ham yo'q — cheksiz bajarish mumkin.">200 сум за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.</div>
+
+    <!-- рекламный слот сверху (для будущей рекламы) -->
+    <div id="captcha-ad-slot-top" class="captcha-ad-slot"></div>
+
+    <div style="padding:6px 20px 4px;text-align:center">
+      <div id="captcha-progress" style="font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:10px">0/10</div>
+      <div id="captcha-example" style="font-size:34px;font-weight:900;letter-spacing:-0.5px;margin-bottom:14px">—</div>
+      <input class="form-input" id="captcha-answer-input" type="number" inputmode="numeric" style="text-align:center;font-size:18px;font-weight:700;margin-bottom:6px" data-placeholder-ru="Ответ" data-placeholder-uz="Javob" placeholder="Ответ">
+      <div id="captcha-feedback" style="min-height:18px;font-size:12.5px;font-weight:700;margin-bottom:4px"></div>
+    </div>
+
+    <!-- рекламный слот снизу (для будущей рекламы) -->
+    <div id="captcha-ad-slot-bottom" class="captcha-ad-slot"></div>
+
+    <div class="modal-actions">
+      <button class="btn-primary" id="captcha-submit-btn" onclick="submitCaptchaAnswer()" data-ru="Отправить" data-uz="Yuborish">Отправить</button>
+      <button class="btn-secondary" onclick="closeCaptchaModal()" data-ru="Закрыть" data-uz="Yopish">Закрыть</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ COMPLAINT MODAL ═══ -->
 <div class="modal-overlay" id="complaint-modal" onclick="if(event.target.id==='complaint-modal')this.classList.remove('active')">
   <div class="modal-sheet">
@@ -2172,6 +2210,83 @@ function initAdTaskWidget() {
     showToast(L('Задание выполнено','Topshiriq bajarildi'));
   });
   el.addEventListener('error', (e) => { console.error('adsgram-task', e.detail); });
+}
+
+// ═══ КАПЧА (Задание от партнёра — ввод капчи за деньги) ═══
+function captchaRewardPer10() { return 200 / UZS_RATE; }  // 200 сум за каждые 10 верных ответов (хранится в $)
+const CAPTCHA_BATCH = 10;
+const CAPTCHA_MAX_DIGIT = 10;  // однозначные числа: 0-9
+let captchaAnswer = 0;
+function captchaCountKey(uid) { return `earnuz_captcha_count_${uid}`; }
+function captchaGetCount(uid) { try { return parseInt(localStorage.getItem(captchaCountKey(uid)) || '0'); } catch(e) { return 0; } }
+function captchaSetCount(uid, v) { try { localStorage.setItem(captchaCountKey(uid), String(v)); } catch(e) {} }
+
+// перезапуск рекламных блоков вокруг капчи — сюда позже вставится код рекламной сети
+function refreshCaptchaAdSlots() {
+  ['captcha-ad-slot-top','captcha-ad-slot-bottom'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { /* TODO: вставить вызов обновления рекламного блока здесь */ }
+  });
+}
+
+function captchaGenerateExample() {
+  const a = Math.floor(Math.random() * CAPTCHA_MAX_DIGIT);
+  const b = Math.floor(Math.random() * CAPTCHA_MAX_DIGIT);
+  captchaAnswer = a + b;
+  const ex = document.getElementById('captcha-example');
+  if (ex) ex.textContent = `${a} + ${b} = ?`;
+  const inp = document.getElementById('captcha-answer-input');
+  if (inp) inp.value = '';
+  const fb = document.getElementById('captcha-feedback');
+  if (fb) fb.textContent = '';
+}
+
+async function captchaUpdateProgress() {
+  const uid = await getMyUserId();
+  const count = uid ? captchaGetCount(uid) : 0;
+  const el = document.getElementById('captcha-progress');
+  if (el) el.textContent = `${count % CAPTCHA_BATCH}/${CAPTCHA_BATCH}`;
+}
+
+async function openCaptchaModal() {
+  document.getElementById('captcha-modal').classList.add('active');
+  await captchaUpdateProgress();
+  captchaGenerateExample();
+  refreshCaptchaAdSlots();
+}
+function closeCaptchaModal() {
+  document.getElementById('captcha-modal').classList.remove('active');
+}
+
+async function submitCaptchaAnswer() {
+  const inp = document.getElementById('captcha-answer-input');
+  const fb = document.getElementById('captcha-feedback');
+  const given = parseInt(inp?.value, 10);
+  const correct = !isNaN(given) && given === captchaAnswer;
+
+  if (correct) {
+    if (fb) { fb.textContent = L('✅ Правильно','✅ To\'g\'ri'); fb.style.color = 'var(--green)'; }
+    const uid = await getMyUserId();
+    if (uid) {
+      const newCount = captchaGetCount(uid) + 1;
+      captchaSetCount(uid, newCount);
+      if (newCount % CAPTCHA_BATCH === 0) {
+        const reward = captchaRewardPer10();
+        const { data: u } = await sb.from('users').select('balance').eq('id', uid).single();
+        const nb = Math.round(((u?.balance||0) + reward) * 1000) / 1000;
+        await sb.from('transactions').insert({ user_id: uid, type: 'captcha_reward', amount: reward, balance_after: nb, status: 'completed' });
+        await sb.from('users').update({ balance: nb }).eq('id', uid);
+        await sb.from('notifications').insert({ user_id: uid, type: 'reward', role: 'executor', title: 'Награда за капчи', title_uz: 'Captcha uchun mukofot', text: `+${fmtMoney(reward)} за ${CAPTCHA_BATCH} введённых капч`, text_uz: `${CAPTCHA_BATCH} ta captcha uchun +${fmtMoney(reward)}` });
+        dbRefreshBalance();
+        showToast('+' + fmtMoney(reward) + ' ' + L('начислено','hisoblandi'));
+      }
+    }
+  } else {
+    if (fb) { fb.textContent = L('❌ Неверно','❌ Noto\'g\'ri'); fb.style.color = 'var(--accent2)'; }
+  }
+  await captchaUpdateProgress();
+  captchaGenerateExample();
+  refreshCaptchaAdSlots();
 }
 
 // ═══ MONETAG (Задание 2): rewarded interstitial ═══
