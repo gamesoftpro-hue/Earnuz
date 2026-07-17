@@ -1915,7 +1915,7 @@ body.employer .home-hero { margin-bottom: 22px; }
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title" data-ru="Ввод капчи за деньги" data-uz="Pul uchun captcha kiritish">Ввод капчи за деньги</div>
-    <div style="padding:0 20px 10px;font-size:12px;color:var(--muted);line-height:1.5" id="captcha-modal-desc">Загрузка условий…</div>
+    <div style="padding:0 20px 10px;font-size:12px;color:var(--muted);line-height:1.5" id="captcha-modal-desc"></div>
 
     <!-- рекламные слоты сверху (2 шт., для рекламной сети) -->
     <div id="captcha-ad-slot-bottom-2" class="captcha-ad-slot"></div>
@@ -2289,6 +2289,7 @@ function initAdTaskWidget() {
 const CAPTCHA_REWARD_UZS = 200;
 function captchaRewardPer10() { return CAPTCHA_REWARD_UZS / UZS_RATE; }  // CAPTCHA_REWARD_UZS за каждые 10 верных ответов (хранится в $)
 function captchaRewardLabel() {
+  // Для капчи в USD показываем 3 знака, чтобы было видно эквивалент 200 сум (≈0.017$).
   const usd = captchaRewardPer10().toFixed(3) + ' $';
   return curCurrency === 'uzs' ? `${CAPTCHA_REWARD_UZS.toLocaleString('ru-RU')} ${L('сум',"so'm")}` : usd;
 }
@@ -5888,13 +5889,13 @@ async function admShowEarnings(userId) {
     .order('created_at',{ascending:false}).limit(ADMIN_ACTIVITY_LOG_LIMIT);
 
   const logRows = (logs||[]).map(n => {
-    try { return { ...JSON.parse(n.text||'{}'), created_at: n.created_at }; } catch(e) { console.warn('activity log parse failed', e); return null; }
+    try { return { ...JSON.parse(n.text||'{}'), event_at: n.created_at }; } catch(e) { console.warn('activity log parse failed', e); return null; }
   }).filter(Boolean);
-  const adToday = logRows.filter(x => x.event === 'ad_watch' && String(x.created_at||'').slice(0,10) === todayKey);
-  const captchaToday = logRows.filter(x => x.event === 'captcha_answer' && String(x.created_at||'').slice(0,10) === todayKey).length;
-  const adPaidToday = adToday.reduce((s,x)=>s+Number(x.paid_now||0),0);
+  const adTodayEvents = logRows.filter(x => x.event === 'ad_watch' && String(x.event_at||'').slice(0,10) === todayKey);
+  const captchaTodayCount = logRows.filter(x => x.event === 'captcha_answer' && String(x.event_at||'').slice(0,10) === todayKey).length;
+  const adPaidToday = adTodayEvents.reduce((s,x)=>s+Number(x.paid_now||0),0);
   const sourceDaily = {};
-  adToday.forEach(x => {
+  adTodayEvents.forEach(x => {
     const k = sourceN[x.source] || x.source || '—';
     sourceDaily[k] = (sourceDaily[k]||0) + 1;
   });
@@ -5906,7 +5907,7 @@ async function admShowEarnings(userId) {
   }).join('');
   const logEventsRows = logRows.slice(0, ADMIN_ACTIVITY_MODAL_LOG_ROWS).map(x => {
     const src = sourceN[x.source] || x.source || (x.event || 'event');
-    const time = new Date(x.created_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const time = new Date(x.event_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});
     const amount = Number(x.paid_now||0);
     const right = amount>0 ? `<span style="color:var(--green)">+${fmtMoney(amount)}</span>` : '<span style="color:var(--muted)">—</span>';
     return `<div class="conf-row"><span>${src}<br><span style="font-size:10px;color:var(--muted)">${time}</span></span>${right}</div>`;
@@ -5916,9 +5917,9 @@ async function admShowEarnings(userId) {
     title: L('Действия и начисления пользователя','Foydalanuvchi harakati va hisoblar'),
     text: L('Показываю рекламу/капчу за сутки, источники и время каждого события.','Kunlik reklama/captcha, manbalar va har bir voqea vaqti.'),
     breakdown: `<div class="conf-break" style="max-height:55vh;overflow-y:auto">
-      <div class="conf-row"><span>${L('Рекламных событий за сутки','Kunlik reklama voqealari')}</span><span>${adToday.length}</span></div>
+      <div class="conf-row"><span>${L('Рекламных событий за сутки','Kunlik reklama voqealari')}</span><span>${adTodayEvents.length}</span></div>
       <div class="conf-row"><span>${L('Начислено с рекламы за сутки','Kunlik reklama hisoblandi')}</span><span style="color:var(--green)">+${fmtMoney(adPaidToday)}</span></div>
-      <div class="conf-row"><span>${L('Правильных капч за сутки','Kunlik to\'g\'ri captcha')}</span><span>${captchaToday}</span></div>
+      <div class="conf-row"><span>${L('Правильных капч за сутки','Kunlik to\'g\'ri captcha')}</span><span>${captchaTodayCount}</span></div>
       ${sourceDailyRows || `<div class="admin-empty">${L('Источники за сутки не найдены','Kunlik manbalar topilmadi')}</div>`}
       <div style="margin-top:10px;font-size:12px;font-weight:700">${L('Последние начисления','Oxirgi hisoblar')}</div>
       ${txRows || `<div class="admin-empty">${L('Поступлений не найдено','Tushumlar topilmadi')}</div>`}
