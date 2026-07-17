@@ -227,8 +227,41 @@ body {
   display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
 }
 .captcha-ad-slot {
-  margin: 6px 10px; min-height: 72px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center;
+  margin: 6px 10px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.captcha-ad-slot:empty { display: none; }  /* пустой слот не рисуем — никаких пунктирных рамок */
+
+/* ═══ Партнёры ═══ */
+.partners-banner {
+  position: relative; overflow: hidden; margin: 0 20px; padding: 17px 18px;
+  border-radius: var(--card-r); cursor: pointer;
+  background: linear-gradient(135deg, rgba(108,99,255,0.16), rgba(255,159,124,0.10));
+  border: 1px solid rgba(108,99,255,0.28);
+  display: flex; align-items: center; gap: 13px;
+}
+.partners-banner-glow {
+  position: absolute; top: -40px; right: -30px; width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,159,124,0.22), transparent 70%); pointer-events: none;
+}
+.partners-banner-icon { font-size: 26px; flex-shrink: 0; }
+.partners-banner-text { flex: 1; min-width: 0; }
+.partners-banner-title { font-size: 14px; font-weight: 800; letter-spacing: -0.2px; }
+.partners-banner-sub { font-size: 11.5px; color: var(--muted); font-weight: 300; margin-top: 3px; line-height: 1.45; }
+.partners-banner-arrow { font-size: 18px; color: var(--accent); flex-shrink: 0; }
+.partner-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-r);
+  padding: 16px 17px; display: flex; align-items: center; gap: 13px; cursor: pointer;
+}
+.partner-card-logo {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  background: rgba(108,99,255,0.14); display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.partner-card-name { font-size: 14px; font-weight: 800; }
+.partner-card-desc { font-size: 11.5px; color: var(--muted); font-weight: 300; margin-top: 3px; line-height: 1.45; }
+.partner-card-btn {
+  flex-shrink: 0; background: var(--accent); color: #fff; border: none; border-radius: 11px;
+  padding: 9px 14px; font-size: 12px; font-weight: 800; font-family: 'Outfit', sans-serif; cursor: pointer;
 }
 .task-row {
   background: var(--surface); border-radius: var(--card-r); border: 1px solid var(--border);
@@ -768,6 +801,11 @@ body.employer .home-hero { margin-bottom: 22px; }
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<!-- HilltopAds: подготовка (их зона-скрипт добавится позже) -->
+<meta name="referrer" content="no-referrer-when-downgrade" />
+<!-- Yandex.RTB: загрузчик -->
+<script>window.yaContextCb=window.yaContextCb||[]</script>
+<script src="https://yandex.ru/ads/system/context.js" async></script>
 <script src="//libtl.com/sdk.js" data-zone="11245477" data-sdk="show_11245477"></script>
 <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
 </head>
@@ -925,7 +963,7 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <div style="display:flex;align-items:center;gap:8px">
         <div class="bal-chip" id="home-bal-chip">0 $</div>
-        <div onclick="showScreen('notifications',null,4)" style="position:relative;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <div onclick="showScreen('notifications',null,5)" style="position:relative;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
           <span class="adm-count" id="bell-badge-1" style="display:none;position:absolute;top:-4px;right:-4px">0</span>
         </div>
@@ -942,6 +980,26 @@ body.employer .home-hero { margin-bottom: 22px; }
     <button class="home-hero-btn" onclick="showScreen('tasks',null,1)" data-ru="Начать зарабатывать" data-uz="Daromad olishni boshlash">Начать зарабатывать</button>
   </div>
 
+  <!-- Referral banner -->
+  <div class="ref-banner" onclick="showScreen('referral',null,4)" style="margin-top:16px">
+    <div class="ref-text">
+      <div class="ref-title" data-ru="Пригласи друзей — зарабатывай" data-uz="Do'stlarni taklif qil — daromad ol">Пригласи друзей — зарабатывай</div>
+      <div class="ref-sub" data-ru="До 10% с дохода каждого реферала" data-uz="Har bir referaldan 10% gacha">До 10% с дохода каждого реферала</div>
+    </div>
+    <div class="ref-arrow">→</div>
+  </div>
+
+  <!-- Partners promo -->
+  <div class="partners-banner" onclick="showScreen('partners',null,3)" style="margin-top:16px">
+    <div class="partners-banner-glow"></div>
+    <div class="partners-banner-icon">🤝</div>
+    <div class="partners-banner-text">
+      <div class="partners-banner-title" data-ru="Попробуйте также наших партнёров" data-uz="Hamkorlarimizni ham sinab ko'ring">Попробуйте также наших партнёров</div>
+      <div class="partners-banner-sub" data-ru="Дополнительные сервисы с интересными возможностями" data-uz="Qiziqarli imkoniyatlarga ega qo'shimcha xizmatlar">Дополнительные сервисы с интересными возможностями</div>
+    </div>
+    <div class="partners-banner-arrow">→</div>
+  </div>
+
   <!-- Daily bonus banner -->
   <div class="bonus-banner" onclick="openDailyBonusModal()" style="margin-top:16px">
     <div class="bonus-banner-icon">🎁</div>
@@ -952,14 +1010,6 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div class="bonus-banner-arrow">→</div>
   </div>
 
-  <!-- Referral banner -->
-  <div class="ref-banner" onclick="showScreen('referral',null,3)" style="margin-top:16px">
-    <div class="ref-text">
-      <div class="ref-title" data-ru="Пригласи друзей — зарабатывай" data-uz="Do'stlarni taklif qil — daromad ol">Пригласи друзей — зарабатывай</div>
-      <div class="ref-sub" data-ru="До 10% с дохода каждого реферала" data-uz="Har bir referaldan 10% gacha">До 10% с дохода каждого реферала</div>
-    </div>
-    <div class="ref-arrow">→</div>
-  </div>
 
   <!-- News (real, from DB) -->
   <div class="sec-head">
@@ -1179,6 +1229,15 @@ body.employer .home-hero { margin-bottom: 22px; }
 </div>
 
 <!-- ═══ EXECUTOR: PROFILE ═══ -->
+<!-- ═══ PARTNERS ═══ -->
+<div class="screen" id="screen-partners">
+  <div class="page-header">
+    <div class="page-title" data-ru="Наши партнёры" data-uz="Hamkorlarimiz">Наши партнёры</div>
+    <div class="page-sub" data-ru="Проверенные сервисы — регистрируйся и зарабатывай у них тоже" data-uz="Ishonchli xizmatlar — ro'yxatdan o'ting va ularda ham daromad qiling">Проверенные сервисы — регистрируйся и зарабатывай у них тоже</div>
+  </div>
+  <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:10px" id="partners-list"></div>
+</div>
+
 <div class="screen" id="screen-profile">
   <div class="profile-header">
     <div class="profile-avatar-wrap" onclick="secretAdminTap()">
@@ -1187,9 +1246,9 @@ body.employer .home-hero { margin-bottom: 22px; }
     </div>
     <div class="profile-name" data-ru="Профиль" data-uz="Profil">Профиль</div>
     <div class="profile-since" data-ru="В системе с июня 2026" data-uz="2026 yil iyundan beri">В системе с июня 2026</div>
-    <div class="level-badge" onclick="showScreen('levels',null,4)" style="cursor:pointer" data-ru="Уровень 1 · Новичок →" data-uz="1-daraja · Yangi →">Уровень 1 · Новичок →</div>
+    <div class="level-badge" onclick="showScreen('levels',null,5)" style="cursor:pointer" data-ru="Уровень 1 · Новичок →" data-uz="1-daraja · Yangi →">Уровень 1 · Новичок →</div>
   </div>
-  <div class="level-bar-wrap" onclick="showScreen('levels',null,4)" style="cursor:pointer">
+  <div class="level-bar-wrap" onclick="showScreen('levels',null,5)" style="cursor:pointer">
     <div class="level-bar-head">
       <span data-ru="До уровня 2" data-uz="2-darajagacha">До уровня 2</span>
       <span data-ru="0 / 5 заданий" data-uz="0 / 5 topshiriq">0 / 5 заданий</span>
@@ -1203,15 +1262,15 @@ body.employer .home-hero { margin-bottom: 22px; }
   </div>
   <div style="padding:0 20px 10px"><div class="sec-title" data-ru="Меню" data-uz="Menyu">Меню</div></div>
   <div class="settings-list">
-    <div class="settings-item" onclick="showScreen('levels',null,4)"><div class="settings-icon">🏅</div><div class="settings-label" data-ru="Уровни и достижения" data-uz="Darajalar va yutuqlar">Уровни и достижения</div><div class="settings-arrow">›</div></div>
-    <div class="settings-item" onclick="showScreen('my-reports',null,4)"><div class="settings-icon">📋</div><div class="settings-label" data-ru="Мои отчёты и статусы" data-uz="Hisobotlarim va holatlar">Мои отчёты и статусы</div><div class="settings-arrow">›</div></div>
-    <div class="settings-item" onclick="showScreen('history',null,4)"><div class="settings-icon">💳</div><div class="settings-label" data-ru="История выплат" data-uz="To'lovlar tarixi">История выплат</div><div class="settings-arrow">›</div></div>
-    <div class="settings-item" onclick="showScreen('withdraw',null,4);updateWithdrawUI()"><div class="settings-icon"></div><div class="settings-label" data-ru="Вывод средств" data-uz="Mablag' chiqarish">Вывод средств</div><div class="settings-arrow">›</div></div>
+    <div class="settings-item" onclick="showScreen('levels',null,5)"><div class="settings-icon">🏅</div><div class="settings-label" data-ru="Уровни и достижения" data-uz="Darajalar va yutuqlar">Уровни и достижения</div><div class="settings-arrow">›</div></div>
+    <div class="settings-item" onclick="showScreen('my-reports',null,5)"><div class="settings-icon">📋</div><div class="settings-label" data-ru="Мои отчёты и статусы" data-uz="Hisobotlarim va holatlar">Мои отчёты и статусы</div><div class="settings-arrow">›</div></div>
+    <div class="settings-item" onclick="showScreen('history',null,5)"><div class="settings-icon">💳</div><div class="settings-label" data-ru="История выплат" data-uz="To'lovlar tarixi">История выплат</div><div class="settings-arrow">›</div></div>
+    <div class="settings-item" onclick="showScreen('withdraw',null,5);updateWithdrawUI()"><div class="settings-icon"></div><div class="settings-label" data-ru="Вывод средств" data-uz="Mablag' chiqarish">Вывод средств</div><div class="settings-arrow">›</div></div>
     <div class="settings-item" onclick="openMyProfile()"><div class="settings-icon">📋</div><div class="settings-label" data-ru="Моя анкета" data-uz="Mening anketam">Моя анкета</div><div class="settings-arrow">›</div></div>
     <div class="settings-item" onclick="guideShow()"><div class="settings-icon">❓</div><div class="settings-label" data-ru="Как это работает" data-uz="Bu qanday ishlaydi">Как это работает</div><div class="settings-arrow">›</div></div>
-    <div class="settings-item" onclick="showScreen('notifications',null,4)"><div class="settings-icon">🔔</div><div class="settings-label" data-ru="Уведомления" data-uz="Bildirishnomalar">Уведомления</div><span class="adm-count" id="notif-badge-1" style="display:none">0</span><div class="settings-arrow">›</div></div>
-    <div class="settings-item" onclick="showScreen('privacy',null,4)"><div class="settings-icon">🔒</div><div class="settings-label" data-ru="Конфиденциальность" data-uz="Maxfiylik">Конфиденциальность</div><div class="settings-arrow">›</div></div>
-    <div class="settings-item" onclick="showScreen('rules',null,4)"><div class="settings-icon">📖</div><div class="settings-label" data-ru="Правила сервиса / Помощь" data-uz="Servis qoidalari / Yordam">Правила сервиса / Помощь</div><div class="settings-arrow">›</div></div>
+    <div class="settings-item" onclick="showScreen('notifications',null,5)"><div class="settings-icon">🔔</div><div class="settings-label" data-ru="Уведомления" data-uz="Bildirishnomalar">Уведомления</div><span class="adm-count" id="notif-badge-1" style="display:none">0</span><div class="settings-arrow">›</div></div>
+    <div class="settings-item" onclick="showScreen('privacy',null,5)"><div class="settings-icon">🔒</div><div class="settings-label" data-ru="Конфиденциальность" data-uz="Maxfiylik">Конфиденциальность</div><div class="settings-arrow">›</div></div>
+    <div class="settings-item" onclick="showScreen('rules',null,5)"><div class="settings-icon">📖</div><div class="settings-label" data-ru="Правила сервиса / Помощь" data-uz="Servis qoidalari / Yordam">Правила сервиса / Помощь</div><div class="settings-arrow">›</div></div>
     <div class="settings-item" onclick="window.open('https://t.me/Lvlme_me','_blank')"><div class="settings-icon">💬</div><div class="settings-label" data-ru="Поддержка / Сообщить об ошибке" data-uz="Qo'llab-quvvatlash / Xato haqida xabar">Поддержка / Сообщить об ошибке</div><div class="settings-arrow">›</div></div>
   </div>
   <div style="height:12px"></div>
@@ -1917,8 +1976,13 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div class="modal-title" data-ru="Ввод капчи за деньги" data-uz="Pul uchun captcha kiritish">Ввод капчи за деньги</div>
     <div style="padding:0 20px 10px;font-size:12px;color:var(--muted);line-height:1.5" id="captcha-modal-desc"></div>
 
+<<<<<<< HEAD
     <!-- рекламные слоты сверху (2 шт., для рекламной сети) -->
     <div id="captcha-ad-slot-bottom-2" class="captcha-ad-slot"></div>
+=======
+    <!-- рекламные слоты сверху: HilltopAds 300×100 + Adsterra 320×50 -->
+    <div id="captcha-ad-slot-top" class="captcha-ad-slot"></div>
+>>>>>>> origin/main
     <div id="captcha-ad-slot-top-2" class="captcha-ad-slot"></div>
 
     <div style="padding:6px 20px 4px;text-align:center">
@@ -1928,9 +1992,14 @@ body.employer .home-hero { margin-bottom: 22px; }
       <div id="captcha-feedback" style="min-height:18px;font-size:12.5px;font-weight:700;margin-bottom:4px"></div>
     </div>
 
-    <!-- рекламные слоты снизу (2 шт., для рекламной сети) -->
+    <!-- рекламные слоты снизу: HilltopAds 300×100 + Adsterra 300×250, ниже — Яндекс-лента -->
     <div id="captcha-ad-slot-bottom" class="captcha-ad-slot"></div>
+<<<<<<< HEAD
     <div id="captcha-ad-slot-top" class="captcha-ad-slot"></div>
+=======
+    <div id="captcha-ad-slot-bottom-3" class="captcha-ad-slot"></div>
+    <div id="captcha-ad-slot-bottom-2" class="captcha-ad-slot"><div id="yandex_rtb_R-A-19578188-1" style="width:100%"></div></div>
+>>>>>>> origin/main
 
     <div class="modal-actions">
       <button class="btn-primary" id="captcha-submit-btn" onclick="submitCaptchaAnswer()" data-ru="Отправить" data-uz="Yuborish">Отправить</button>
@@ -2092,8 +2161,9 @@ body.employer .home-hero { margin-bottom: 22px; }
   <button class="nav-item active" onclick="showScreen('home',this,0)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></div><span data-ru="Главная" data-uz="Asosiy">Главная</span></button>
   <button class="nav-item" onclick="openServiceTasks(this)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.5 2.5M16.5 16.5 19 19M19 5l-2.5 2.5M7.5 16.5 5 19"/><circle cx="12" cy="12" r="3.2"/></svg></div><span data-ru="Быстрый заработок" data-uz="Tezkor daromad" style="font-size:8.5px">Быстрый заработок</span></button>
   <button class="nav-item" onclick="openMarketTasks(this)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><span data-ru="Биржа заданий" data-uz="Topshiriqlar birjasi" style="font-size:8.5px">Биржа заданий</span></button>
-  <button class="nav-item" onclick="showScreen('referral',this,3)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><circle cx="17" cy="7" r="2.4"/><path d="M20.5 18c0-2.4-1.6-4-3.5-4"/></svg></div><span data-ru="Рефералы" data-uz="Referallar">Рефералы</span></button>
-  <button class="nav-item" onclick="showScreen('profile',this,4)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></div><span data-ru="Профиль" data-uz="Profil">Профиль</span></button>
+  <button class="nav-item" onclick="showScreen('partners',this,3)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 12l2.5 2.5a2 2 0 0 0 2.8 0L16 11.8a2 2 0 0 0 0-2.8l-2.3-2.3a2 2 0 0 0-2.8 0L8.2 9.4"/><path d="M3 8.5 7.5 4l3 1-4.7 4.7a1.8 1.8 0 0 0 2.5 2.5"/><path d="M21 8.5 16.5 4"/><path d="M14.5 16.5 16 18a1.6 1.6 0 0 1-2.3 2.3l-1.5-1.5"/><path d="M12.2 18.8 11 20a1.6 1.6 0 0 1-2.3-2.3l1.2-1.2"/></svg></div><span data-ru="Партнёры" data-uz="Hamkorlar">Партнёры</span></button>
+  <button class="nav-item" onclick="showScreen('referral',this,4)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><circle cx="17" cy="7" r="2.4"/><path d="M20.5 18c0-2.4-1.6-4-3.5-4"/></svg></div><span data-ru="Рефералы" data-uz="Referallar">Рефералы</span></button>
+  <button class="nav-item" onclick="showScreen('profile',this,5)"><div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></div><span data-ru="Профиль" data-uz="Profil">Профиль</span></button>
 </nav>
 
 <!-- BOTTOM NAV EMPLOYER -->
@@ -2191,7 +2261,7 @@ function adsInit() {
 // UTC-день (сброс в 00:00 UTC)
 function adsTodayKey() { const d = new Date(); return `earnuz_ads_${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`; }
 function adsWatchedToday() { try { return parseInt(localStorage.getItem(adsTodayKey())||'0'); } catch(e) { return 0; } }
-function adsLeftToday() { return Math.max(0, ADS_DAILY_LIMIT - adsWatchedToday()); }
+function adsLeftToday() { return Math.max(0, ADS_DAILY_LIMIT - adsWatchedToday() - (typeof adsIntShownToday==='function' ? adsIntShownToday() : 0)); }  // общий лимит: ревард + интерстициал
 // сколько просмотров уже «оплачено» батчами
 function adsPaidKey() { const d = new Date(); return `earnuz_adspaid_${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`; }
 function adsPaidCount() { try { return parseInt(localStorage.getItem(adsPaidKey())||'0'); } catch(e) { return 0; } }
@@ -2310,28 +2380,212 @@ function updateCaptchaTexts() {
   if (desc) desc.textContent = reward + ' ' + L('за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.','har 10 ta to\'g\'ri javob uchun. Noto\'g\'ri javob hisobga olinmaydi, lekin jarima ham yo\'q — cheksiz bajarish mumkin.');
 }
 
-// перезапуск рекламных блоков вокруг капчи (2 сверху + 2 снизу) — сюда позже вставится код рекламной сети
+// ═══ Реклама вокруг капчи ═══
+// Юзерам за неё НИЧЕГО не начисляется и никаких уведомлений — это просто реклама, доход идёт владельцу.
+// Встраиваемый формат остался один — Яндекс-лента. Остальные сети плавающие и работают в РОТАЦИИ.
+
+let _yandexFeedRendered = false;
+function renderYandexFeed() {
+  if (_yandexFeedRendered) return;  // лента рендерится один раз, дальше живёт сама
+  _yandexFeedRendered = true;
+  try {
+    window.yaContextCb = window.yaContextCb || [];
+    window.yaContextCb.push(() => {
+      Ya.Context.AdvManager.render({
+        "blockId": "R-A-19578188-1",
+        "renderTo": "yandex_rtb_R-A-19578188-1",
+        "type": "feed",
+        "onError": () => {
+          const s = document.getElementById('yandex_rtb_R-A-19578188-1');
+          if (s && s.parentElement) s.parentElement.style.display = 'none';
+        }
+      });
+    });
+  } catch(e) { console.warn('yandex rtb', e); }
+}
+
+// ═══ Наши партнёры (CPA) ═══
+// Добавлять партнёров сюда: { icon: 'эмодзи', name: 'Имя', desc: 'описание', descUz: 'на узбекском', url: 'реф-ссылка' }
+const PARTNERS = [
+  // { icon: '🎮', name: 'Пример', desc: 'Регистрируйся и получай бонус', descUz: "Ro'yxatdan o'ting va bonus oling", url: 'https://example.com/?ref=earnup' },
+];
+function renderPartners() {
+  const c = document.getElementById('partners-list');
+  if (!c) return;
+  if (!PARTNERS.length) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">🤝</div><div class="empty-title">${L('Скоро здесь появятся партнёры','Tez orada hamkorlar paydo bo\'ladi')}</div><div class="empty-text">${L('Мы отбираем проверенные сервисы — следи за обновлениями','Biz ishonchli xizmatlarni tanlaymiz — yangilanishlarni kuzating')}</div></div>`;
+    return;
+  }
+  c.innerHTML = PARTNERS.map(p => `
+    <div class="partner-card" onclick="openPartner('${p.url}')">
+      <div class="partner-card-logo">${p.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div class="partner-card-name">${p.name}</div>
+        <div class="partner-card-desc">${lang==='uz' ? (p.descUz||p.desc) : p.desc}</div>
+      </div>
+      <button class="partner-card-btn" onclick="event.stopPropagation();openPartner('${p.url}')">${L('Перейти','O\'tish')}</button>
+    </div>`).join('');
+}
+function openPartner(url) {
+  try {
+    if (window.Telegram?.WebApp?.openLink) window.Telegram.WebApp.openLink(url);
+    else window.open(url, '_blank');
+  } catch(e) { window.open(url, '_blank'); }
+}
+
+// перезапуск рекламных блоков вокруг капчи — вызывается при открытии капчи и после каждого ответа
 function refreshCaptchaAdSlots() {
-  ['captcha-ad-slot-top','captcha-ad-slot-top-2','captcha-ad-slot-bottom','captcha-ad-slot-bottom-2'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { /* TODO: вставить вызов обновления рекламного блока здесь */ }
+  renderYandexFeed();
+  loadFloatingAds();
+  loadHilltopBanners();
+  loadAdsterraBanners();
+}
+
+// ═══ Adsterra: 2 баннера (320×50 сверху, 300×250 снизу) ═══
+// Их invoke.js рисует баннер через document.write — в живую страницу такое вставлять нельзя
+// (сломает документ), поэтому каждый баннер живёт в изолированном iframe.
+const ADSTERRA_BANNERS = [
+  { slot: 'captcha-ad-slot-top-2',    key: '7eb0ae6e653acc98e8d9612bb7bab884', w: 320, h: 50 },
+  { slot: 'captcha-ad-slot-bottom-3', key: '86035bea6a35bc1c85ae24d34d70f9a3', w: 300, h: 250 },
+];
+let _adsterraLoaded = false;
+function loadAdsterraBanners() {
+  if (_adsterraLoaded) return;
+  _adsterraLoaded = true;
+  ADSTERRA_BANNERS.forEach(b => {
+    try {
+      const c = document.getElementById(b.slot);
+      if (!c) return;
+      const f = document.createElement('iframe');
+      f.width = b.w; f.height = b.h;
+      f.style.cssText = 'border:0;overflow:hidden;display:block;max-width:100%';
+      f.setAttribute('scrolling', 'no');
+      c.appendChild(f);
+      // пишем скрипты Adsterra внутрь same-origin iframe: так их document.write работает,
+      // referrer передаётся правильно, и баннер не может сломать саму страницу
+      const d = f.contentWindow.document;
+      d.open();
+      d.write('<html><head><base target="_blank"></head><body style="margin:0;background:transparent">' +
+        '<scr' + 'ipt>atOptions={key:"' + b.key + '",format:"iframe",height:' + b.h + ',width:' + b.w + ',params:{}}<\/scr' + 'ipt>' +
+        '<scr' + 'ipt src="https://www.highperformanceformat.com/' + b.key + '/invoke.js"><\/scr' + 'ipt>' +
+        '</body></html>');
+      d.close();
+    } catch(e) { console.warn('adsterra banner', e); }
   });
 }
 
-// AdsGram: интерстициал на кнопке «Отправить» в капче (блок int-37998)
-const CAPTCHA_INTERSTITIAL_BLOCK_ID = "int-37998";
+// ═══ HilltopAds: 2 встроенных баннера 300×100 вокруг примера ═══
+// MultiTag рендерит баннер рядом со своим <script>, поэтому вставляем скрипты ПРЯМО в слоты.
+// Грузим при первом открытии капчи; дальше Hilltop сам ротирует объявления внутри баннера.
+const HILLTOP_BANNERS = [
+  { slot: 'captcha-ad-slot-top',    src: '//massivesalad.com/bNXjV/s.dkG_lF0/YrWGcD/TeXmN9Nu/ZFU-llk/P/T/cXyxMSz/MYx/N/TKcottNVzVIAzFMUzcEO2HMQQD' },
+  { slot: 'captcha-ad-slot-bottom', src: '//massivesalad.com/bJX_V.srdwG/lb0/Y/WocO/ceymj9wu/ZgUal/kmPATIcLytMYzpMHxZNBj/kWtBNfzcIxz-M/zgEi3PM_wX' },
+];
+let _hilltopLoaded = false;
+function loadHilltopBanners() {
+  if (_hilltopLoaded) return;
+  _hilltopLoaded = true;
+  HILLTOP_BANNERS.forEach(b => {
+    try {
+      const c = document.getElementById(b.slot);
+      if (!c) return;
+      const s = document.createElement('script');
+      s.settings = {};
+      s.src = b.src;
+      s.async = true;
+      s.referrerPolicy = 'no-referrer-when-downgrade';
+      c.appendChild(s);
+    } catch(e) { console.warn('hilltop banner', e); }
+  });
+}
+
+// ═══ Плавающие сети: ДВЕ одновременно, на разных позициях ═══
+// Adexium (push-карточка СВЕРХУ) — всегда. НИЖНЮЮ позицию делят Onclicka и RichAds
+// по 10-минутным окнам: оба липнут вниз, вместе нельзя — перекроют друг друга,
+// а за перекрытие чужой рекламы сети банят. Итого на активной капче:
+// верхний float + нижний float + Яндекс-лента + полноэкранка каждые 3 отправки.
+const ONCLICKA_SPOTS = [448042, 448043];
+const RICHADS_SRC = 'https://richinfo.co/richpartners/in-page/js/richads-ob.js?pubid=1017373&siteid=401599';
+const ADEXIUM_WID = '2d339fb5-a421-4faa-b1cd-7492e24630f0';
+let _floatingAdsLoaded = false;
+function loadFloatingAds() {
+  if (_floatingAdsLoaded) return;  // выбор фиксируется на сессию при первом открытии капчи
+  _floatingAdsLoaded = true;
+  // Adexium push УБРАН: его карточка перекрывала кнопку «Отправить» в капче.
+  // Вернём, если найдём у них настройку позиции, не мешающую интерфейсу.
+  // нижняя позиция: чётное 10-минутное окно → Onclicka (оба спота), нечётное → RichAds
+  const win = Math.floor(Date.now() / 600000) % 2;
+  try {
+    if (win === 0) {
+      ONCLICKA_SPOTS.forEach(id => {
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://js.onclckmn.com/static/onclicka.js';
+        s.setAttribute('data-admpid', String(id));
+        document.head.appendChild(s);
+      });
+    } else {
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = RICHADS_SRC;
+      document.head.appendChild(s);
+    }
+  } catch(e) { console.warn('floating ads', e); }
+}
+// Яндекс-блок R-A-19578188-2 переведён на АВТОРАЗМЕЩЕНИЕ: отдельный код не нужен,
+// реклама (флор и т.п.) показывается автоматически через загрузчик context.js в <head>.
+
+// AdsGram: интерстициал на кнопке «Отправить» в капче (блок int-38001)
+const CAPTCHA_INTERSTITIAL_BLOCK_ID = "int-38001";
 let _captchaInterstitialController = null;
 function captchaInterstitialInit() {
   try {
     if (window.Adsgram && !_captchaInterstitialController) _captchaInterstitialController = window.Adsgram.init({ blockId: CAPTCHA_INTERSTITIAL_BLOCK_ID });
   } catch(e) { console.error('adsgram interstitial init', e); }
 }
+
+// ═══ ОБЩИЙ дневной учёт Adsgram: лимит 30 показов/день/юзер НА ВСЕ форматы ═══
+// (ревард-видео + интерстициал вместе). Посмотрел 10 ревардов → интерстициалов осталось 20.
+function adsIntKey() { const d = new Date(); return `earnuz_adsint_${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`; }
+function adsIntShownToday() { try { return parseInt(localStorage.getItem(adsIntKey())||'0'); } catch(e) { return 0; } }
+function adsIntInc() { try { localStorage.setItem(adsIntKey(), String(adsIntShownToday()+1)); } catch(e) {} }
+function adsgramTotalToday() { return adsWatchedToday() + adsIntShownToday(); }
+function adsgramTotalLeft() { return Math.max(0, ADS_DAILY_LIMIT - adsgramTotalToday()); }
+
 function captchaShowInterstitial() {
-  captchaInterstitialInit();
+  // Adsgram ещё в лимите → показываем его и учитываем показ
+  if (adsgramTotalLeft() > 0) {
+    captchaInterstitialInit();
+    try {
+      const p = _captchaInterstitialController?.show();
+      adsIntInc();
+      p?.catch((e) => console.warn('adsgram interstitial skipped/failed', e));
+      return;
+    } catch(e) { console.error('adsgram interstitial show', e); }
+  }
+  // Лимит Adsgram (30/день суммарно) исчерпан → запасная цепочка Monetag:
+  // 1) In-App Interstitial (нативная полноэкранка, свой лимит ~35/день),
+  // 2) после его лимита — Rewarded Popup.
+  // Награду НЕ даём и ничего не пишем юзеру — это просто реклама вместо Adsgram, доход продолжает идти.
   try {
-    _captchaInterstitialController?.show().catch((e) => console.warn('adsgram interstitial skipped/failed', e));
-  } catch(e) { console.error('adsgram interstitial show', e); }
+    if (typeof window.show_11245477 !== 'function') return;
+    if (mtInAppLeftToday() > 0) {
+      window.show_11245477({
+        type: 'inApp',
+        inAppSettings: { frequency: 1, capping: 0.05, interval: 10, timeout: 0.1, everyPage: false }  // 1 показ за вызов, почти без задержки
+      }).then(() => mtInAppInc()).catch((e) => console.warn('monetag inApp skipped', e));
+    } else {
+      window.show_11245477('pop').catch((e) => console.warn('monetag pop fallback skipped', e));
+    }
+  } catch(e) { console.error('monetag fallback', e); }
 }
+
+// свой дневной лимит на Monetag In-App полноэкранку (запасную)
+const MONETAG_INAPP_DAILY_LIMIT = 35;
+function mtInAppKey() { const d = new Date(); return `earnuz_mtinapp_${d.getUTCFullYear()}-${d.getUTCMonth()+1}-${d.getUTCDate()}`; }
+function mtInAppShownToday() { try { return parseInt(localStorage.getItem(mtInAppKey())||'0'); } catch(e) { return 0; } }
+function mtInAppInc() { try { localStorage.setItem(mtInAppKey(), String(mtInAppShownToday()+1)); } catch(e) {} }
+function mtInAppLeftToday() { return Math.max(0, MONETAG_INAPP_DAILY_LIMIT - mtInAppShownToday()); }
 
 // показывать интерстициал не при каждом нажатии, а раз в N раз (N=3) — отдельный счётчик на каждую кнопку
 const ADSGRAM_INTERSTITIAL_EVERY = 3;
@@ -4190,6 +4444,7 @@ function showScreen(id, navEl, navIdx) {
   }
   if (id === 'emp-tasks') { dbLoadEmpTasks(); }
   if (id === 'levels') renderLevels();
+  if (id === 'partners') renderPartners();
   if (id === 'my-reports') { dbAutoApproveExpired().then(()=>dbLoadMyReports()); }
   if (id === 'notifications') renderNotifications();
   if (id === 'history') dbLoadHistory();
