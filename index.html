@@ -1031,9 +1031,9 @@ body.employer .home-hero { margin-bottom: 22px; }
         <div class="svc-row-sub" style="margin-top:3px"><span data-ru="Задание от партнёра, может меняться" data-uz="Hamkor topshirig'i, o'zgarishi mumkin">Задание от партнёра, может меняться</span></div>
       </div>
       <adsgram-task data-block-id="task-37383" id="ad-task-widget" class="adsgram-task" style="display:block;width:100%">
-        <span slot="reward" class="money-usd" data-usd="0" data-prefix="+" style="display:none">+0 $</span>
+        <span slot="reward" class="money-usd" data-usd="0.005" data-prefix="+">+0.005 $</span>
         <div slot="button" class="svc-row-btn" style="display:block;width:100%;box-sizing:border-box;text-align:center" data-ru="Выполнить" data-uz="Bajarish">Выполнить</div>
-        <div slot="claim" class="svc-row-btn" style="display:block;width:100%;box-sizing:border-box;text-align:center;background:var(--green)" data-ru="Забрать" data-uz="Olish">Забрать</div>
+        <div slot="claim" class="svc-row-btn" style="display:block;width:100%;box-sizing:border-box;text-align:center;background:var(--green)" data-ru="Проверить и забрать" data-uz="Tekshirib olish">Проверить и забрать</div>
         <div slot="done" class="svc-row-btn" style="display:block;width:100%;box-sizing:border-box;text-align:center;opacity:0.6" data-ru="Выполнено" data-uz="Bajarildi">Выполнено</div>
       </adsgram-task>
     </div>
@@ -1918,7 +1918,7 @@ body.employer .home-hero { margin-bottom: 22px; }
     <div style="padding:0 20px 10px;font-size:12px;color:var(--muted);line-height:1.5" id="captcha-modal-desc">200 сум за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.</div>
 
     <!-- рекламные слоты сверху (2 шт., для рекламной сети) -->
-    <div id="captcha-ad-slot-top" class="captcha-ad-slot"></div>
+    <div id="captcha-ad-slot-bottom-2" class="captcha-ad-slot"></div>
     <div id="captcha-ad-slot-top-2" class="captcha-ad-slot"></div>
 
     <div style="padding:6px 20px 4px;text-align:center">
@@ -1930,7 +1930,7 @@ body.employer .home-hero { margin-bottom: 22px; }
 
     <!-- рекламные слоты снизу (2 шт., для рекламной сети) -->
     <div id="captcha-ad-slot-bottom" class="captcha-ad-slot"></div>
-    <div id="captcha-ad-slot-bottom-2" class="captcha-ad-slot"></div>
+    <div id="captcha-ad-slot-top" class="captcha-ad-slot"></div>
 
     <div class="modal-actions">
       <button class="btn-primary" id="captcha-submit-btn" onclick="submitCaptchaAnswer()" data-ru="Отправить" data-uz="Yuborish">Отправить</button>
@@ -2149,6 +2149,21 @@ function tgAuthPayload() {
     return { dcs: pairs.join('\n'), hash };
   } catch(e) { return null; }
 }
+async function logAdminActivity(userId, eventType, payload = {}) {
+  if (!userId) return;
+  try {
+    const text = JSON.stringify({ event: eventType, ...payload });
+    await sb.from('notifications').insert({
+      user_id: userId,
+      type: 'activity_log',
+      role: 'admin',
+      title: 'activity_log',
+      title_uz: 'activity_log',
+      text,
+      text_uz: text
+    });
+  } catch(e) { console.warn('activity log failed', e); }
+}
 
 // Биржа заданий: оповещение при входе
 function openMarketTasks(navEl) {
@@ -2224,6 +2239,11 @@ async function watchAd() {
       if (error) { showToast('⚠️ ' + error.message); }
       else if (res?.ok) {
         try { localStorage.setItem(adsTodayKey(), String(res.views_today)); } catch(e) {}
+        await logAdminActivity(uid, 'ad_watch', {
+          source: 'adsgram_rewarded',
+          paid_now: Number(res.paid_now || 0),
+          views_today: Number(res.views_today || 0)
+        });
         if (res.paid_now > 0) { dbRefreshBalance(); showToast('+' + fmtMoney(res.paid_now) + ' ' + L('начислено','hisoblandi')); }
         else showToast(L(`Просмотрено ${res.views_today}/30 — награда за каждые 10`,`Ko'rildi ${res.views_today}/30`));
       } else if (res?.error === 'daily_limit') {
@@ -2237,7 +2257,7 @@ async function watchAd() {
   if (btn && adsLeftToday() > 0) { btn.disabled = false; btn.style.opacity = '1'; }
 }
 
-const ADS_TASK_REWARD = 0;  // награда за задание партнёра (пока 0)
+const ADS_TASK_REWARD = 0.005;  // награда за задание партнёра
 function initAdTaskWidget() {
   const el = document.getElementById('ad-task-widget');
   if (!el || el._wired) return;
@@ -2250,6 +2270,7 @@ function initAdTaskWidget() {
         const nb = Math.round(((u?.balance||0) + ADS_TASK_REWARD) * 1000) / 1000;
         await sb.from('transactions').insert({ user_id: uid, type: 'ad_reward', amount: ADS_TASK_REWARD, balance_after: nb, status: 'completed' });
         await sb.from('users').update({ balance: nb }).eq('id', uid);
+        await logAdminActivity(uid, 'partner_task_reward', { source: 'partner_task_1', paid_now: ADS_TASK_REWARD });
         dbRefreshBalance();
       }
     }
@@ -2259,7 +2280,12 @@ function initAdTaskWidget() {
 }
 
 // ═══ КАПЧА (Задание от партнёра — ввод капчи за деньги) ═══
-function captchaRewardPer10() { return 200 / UZS_RATE; }  // 200 сум за каждые 10 верных ответов (хранится в $)
+const CAPTCHA_REWARD_UZS = 200;
+function captchaRewardPer10() { return CAPTCHA_REWARD_UZS / UZS_RATE; }  // 200 сум за каждые 10 верных ответов (хранится в $)
+function captchaRewardLabel() {
+  const usd = (Math.round(captchaRewardPer10() * 1000) / 1000).toFixed(3) + ' $';
+  return curCurrency === 'uzs' ? `${CAPTCHA_REWARD_UZS.toLocaleString('ru-RU')} ${L('сум',"so'm")}` : usd;
+}
 const CAPTCHA_BATCH = 10;
 const CAPTCHA_MAX_DIGIT = 10;  // однозначные числа: 0-9
 let captchaAnswer = 0;
@@ -2269,11 +2295,11 @@ function captchaSetCount(uid, v) { try { localStorage.setItem(captchaCountKey(ui
 
 // подписи капчи — суммы в выбранной валюте (обновляются при смене валюты)
 function updateCaptchaTexts() {
-  const reward = captchaRewardPer10();
+  const reward = captchaRewardLabel();
   const sub = document.getElementById('captcha-price-sub');
-  if (sub) sub.textContent = fmtMoney(reward) + ' ' + L('за 10 капч · без ограничений','10 captcha uchun · cheklovsiz');
+  if (sub) sub.textContent = reward + ' ' + L('за 10 капч · без ограничений','10 captcha uchun · cheklovsiz');
   const desc = document.getElementById('captcha-modal-desc');
-  if (desc) desc.textContent = fmtMoney(reward) + ' ' + L('за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.','har 10 ta to\'g\'ri javob uchun. Noto\'g\'ri javob hisobga olinmaydi, lekin jarima ham yo\'q — cheksiz bajarish mumkin.');
+  if (desc) desc.textContent = reward + ' ' + L('за каждые 10 правильных ответов. Неправильный ответ не засчитывается, но не штрафуется — можно выполнять сколько угодно.','har 10 ta to\'g\'ri javob uchun. Noto\'g\'ri javob hisobga olinmaydi, lekin jarima ham yo\'q — cheksiz bajarish mumkin.');
 }
 
 // перезапуск рекламных блоков вокруг капчи (2 сверху + 2 снизу) — сюда позже вставится код рекламной сети
@@ -2358,6 +2384,11 @@ async function submitCaptchaAnswer() {
     if (uid) {
       const newCount = captchaGetCount(uid) + 1;
       captchaSetCount(uid, newCount);
+      await logAdminActivity(uid, 'captcha_answer', {
+        source: 'captcha_task',
+        is_correct: true,
+        answers_today: newCount
+      });
       if (newCount % CAPTCHA_BATCH === 0) {
         const reward = captchaRewardPer10();
         const { data: u } = await sb.from('users').select('balance').eq('id', uid).single();
@@ -2365,8 +2396,13 @@ async function submitCaptchaAnswer() {
         await sb.from('transactions').insert({ user_id: uid, type: 'captcha_reward', amount: reward, balance_after: nb, status: 'completed' });
         await sb.from('users').update({ balance: nb }).eq('id', uid);
         await sb.from('notifications').insert({ user_id: uid, type: 'reward', role: 'executor', title: 'Награда за капчи', title_uz: 'Captcha uchun mukofot', text: `+${fmtMoney(reward)} за ${CAPTCHA_BATCH} введённых капч`, text_uz: `${CAPTCHA_BATCH} ta captcha uchun +${fmtMoney(reward)}` });
+        await logAdminActivity(uid, 'captcha_reward', {
+          source: 'captcha_task',
+          paid_now: Number(reward || 0),
+          answers_batch: CAPTCHA_BATCH
+        });
         dbRefreshBalance();
-        showToast('+' + fmtMoney(reward) + ' ' + L('начислено','hisoblandi'));
+        showToast('+' + captchaRewardLabel() + ' ' + L('начислено','hisoblandi'));
       }
     }
   } else {
@@ -2518,6 +2554,7 @@ async function watchMonetag() {
       if (error) { showToast('⚠️ ' + error.message); }
       else if (res?.ok) {
         try { localStorage.setItem(mtgTodayKey(), String(mtgWatchedToday()+1)); } catch(e) {}
+        await logAdminActivity(uid, 'ad_watch', { source: 'monetag_rewarded', paid_now: Number(res.paid_now || 0) });
         dbRefreshBalance();
         showToast('+' + fmtMoney(res.paid_now) + ' ' + L('за просмотр','ko\'rish uchun'));
       } else if (res?.error === 'daily_limit') {
@@ -2564,6 +2601,7 @@ function watchMonetagPopup() {
       if (error) { showToast('⚠️ ' + error.message); }
       else if (res?.ok) {
         try { localStorage.setItem(mtgpopTodayKey(), String(mtgpopWatchedToday()+1)); } catch(e) {}
+        await logAdminActivity(uid, 'ad_watch', { source: 'monetag_popup', paid_now: Number(res.paid_now || 0) });
         if (res.paid_now > 0) dbRefreshBalance();
         showToast(L('Награда получена','Mukofot olindi'));
       } else if (res?.error === 'daily_limit') {
@@ -2632,6 +2670,7 @@ async function watchOnclicka() {
       if (error) { showToast('⚠️ ' + error.message); }
       else if (res?.ok) {
         try { localStorage.setItem(oclTodayKey(), String(oclWatchedToday()+1)); } catch(e) {}
+        await logAdminActivity(uid, 'ad_watch', { source: 'onclicka_rewarded', paid_now: Number(res.paid_now || 0) });
         if (res.paid_now > 0) dbRefreshBalance();
         showToast(L('Награда получена','Mukofot olindi'));
       } else if (res?.error === 'daily_limit') {
@@ -5457,6 +5496,7 @@ async function admOpenUser(id) {
       <div class="conf-row"><span>${L('Устройство','Qurilma')}</span><span>${u.device_id||'—'}</span></div>
       <div class="conf-row"><span>IP</span><span>${u.ip_address||'—'}</span></div>
       <div class="conf-row"><span>${L('Статус','Holat')}</span><span style="color:${u.is_blocked?'var(--accent2)':'var(--green)'}">${u.is_blocked?L('Заблокирован','Bloklangan'):L('Активен','Faol')}</span></div>
+      <button class="btn-secondary" style="width:100%;margin-top:10px;padding:10px" onclick="admShowEarnings(${u.id})">${L('Полная активность и начисления','To\'liq faollik va hisoblar')}</button>
       <button class="btn-secondary" style="width:100%;margin-top:10px;padding:10px" onclick="admChangeBalance(${u.id}, ${u.balance||0})">${L('Изменить баланс','Balansni o\'zgartirish')}</button>
       ${u.is_blocked ? '' : `<textarea class="form-textarea" id="block-reason-input" style="min-height:52px;margin-top:8px" placeholder="${L('Причина блокировки...','Bloklash sababi...')}"></textarea>`}
     </div>`,
@@ -5804,24 +5844,78 @@ async function dbLoadAdminWithdrawals() {
     </div>`).join('') : `<div class="admin-empty">${L('Все заявки обработаны','Barcha arizalar ko\'rib chiqildi')}</div>`;
 }
 
-// show where the user's money came from (income history)
+// show full user earning/activity history for admin accounting
 async function admShowEarnings(userId) {
   const pl = '$';
-  const { data } = await sb.from('transactions')
-    .select('*, tasks:related_task_id(title)')
+  const todayKey = new Date().toISOString().slice(0,10);
+  const typeN = {
+    deposit:L('Пополнение','To\'ldirish'),
+    task_reward:L('Задание','Topshiriq'),
+    referral:L('Реферал','Referal'),
+    refund:L('Возврат','Qaytarish'),
+    ad_reward:L('Реклама / партнёрка','Reklama / hamkor'),
+    captcha_reward:L('Капча','Captcha'),
+    bonus:L('Бонус','Bonus'),
+    survey:L('Опрос','So\'rov')
+  };
+  const sourceN = {
+    adsgram_rewarded:'Adsgram rewarded',
+    monetag_rewarded:'Monetag rewarded',
+    monetag_popup:'Monetag popup',
+    onclicka_rewarded:'Onclicka rewarded',
+    partner_task_1:L('Партнёрское задание 1','Hamkor topshirig\'i 1'),
+    captcha_task:L('Капча','Captcha')
+  };
+  const { data: tx } = await sb.from('transactions')
+    .select('id,type,amount,created_at,related_task_id,tasks:related_task_id(title)')
     .eq('user_id', userId)
     .gt('amount', 0)
-    .order('created_at',{ascending:false}).limit(12);
-  const typeN = { deposit:L('Пополнение','To\'ldirish'), task_reward:L('Задание','Topshiriq'), referral:L('Реферал','Referal'), refund:L('Возврат','Qaytarish') };
-  const rows = (data||[]).map(t => {
+    .order('created_at',{ascending:false}).limit(200);
+  const { data: logs } = await sb.from('notifications')
+    .select('title,text,created_at')
+    .eq('user_id', userId)
+    .eq('type', 'activity_log')
+    .eq('role', 'admin')
+    .order('created_at',{ascending:false}).limit(300);
+
+  const logRows = (logs||[]).map(n => {
+    try { return { ...JSON.parse(n.text||'{}'), created_at: n.created_at }; } catch(e) { return null; }
+  }).filter(Boolean);
+  const adToday = logRows.filter(x => x.event === 'ad_watch' && String(x.created_at||'').slice(0,10) === todayKey);
+  const captchaToday = logRows.filter(x => x.event === 'captcha_answer' && String(x.created_at||'').slice(0,10) === todayKey).length;
+  const adPaidToday = adToday.reduce((s,x)=>s+Number(x.paid_now||0),0);
+  const sourceDaily = {};
+  adToday.forEach(x => {
+    const k = sourceN[x.source] || x.source || '—';
+    sourceDaily[k] = (sourceDaily[k]||0) + 1;
+  });
+  const sourceDailyRows = Object.entries(sourceDaily).map(([k,v]) => `<div class="conf-row"><span>${k}</span><span>${v}</span></div>`).join('');
+
+  const txRows = (tx||[]).map(t => {
     const what = t.tasks?.title ? `${typeN[t.type]||t.type}: «${t.tasks.title}»` : (typeN[t.type]||t.type);
     return `<div class="conf-row"><span>${what}<br><span style="font-size:10px;color:var(--muted)">${new Date(t.created_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></span><span style="color:var(--green)">+${(t.amount||0).toLocaleString()} ${pl}</span></div>`;
   }).join('');
+  const logEventsRows = logRows.slice(0,120).map(x => {
+    const src = sourceN[x.source] || x.source || (x.event || 'event');
+    const time = new Date(x.created_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const amount = Number(x.paid_now||0);
+    const right = amount>0 ? `<span style="color:var(--green)">+${fmtMoney(amount)}</span>` : '<span style="color:var(--muted)">—</span>';
+    return `<div class="conf-row"><span>${src}<br><span style="font-size:10px;color:var(--muted)">${time}</span></span>${right}</div>`;
+  }).join('');
   showConfirm({
     icon:'💰', hideCancel:true,
-    title: L('Откуда деньги','Pul qayerdan'),
-    text: rows ? L('Последние поступления на баланс:','Balansga oxirgi tushumlar:') : L('Поступлений не найдено','Tushumlar topilmadi'),
-    breakdown: rows ? `<div class="conf-break" style="max-height:45vh;overflow-y:auto">${rows}</div>` : '',
+    title: L('Действия и начисления пользователя','Foydalanuvchi harakati va hisoblar'),
+    text: L('Показываю рекламу/капчу за сутки, источники и время каждого события.','Kunlik reklama/captcha, manbalar va har bir voqea vaqti.'),
+    breakdown: `<div class="conf-break" style="max-height:55vh;overflow-y:auto">
+      <div class="conf-row"><span>${L('Рекламных событий за сутки','Kunlik reklama voqealari')}</span><span>${adToday.length}</span></div>
+      <div class="conf-row"><span>${L('Начислено с рекламы за сутки','Kunlik reklama hisoblandi')}</span><span style="color:var(--green)">+${fmtMoney(adPaidToday)}</span></div>
+      <div class="conf-row"><span>${L('Правильных капч за сутки','Kunlik to\'g\'ri captcha')}</span><span>${captchaToday}</span></div>
+      ${sourceDailyRows || `<div class="admin-empty">${L('Источники за сутки не найдены','Kunlik manbalar topilmadi')}</div>`}
+      <div style="margin-top:10px;font-size:12px;font-weight:700">${L('Последние начисления','Oxirgi hisoblar')}</div>
+      ${txRows || `<div class="admin-empty">${L('Поступлений не найдено','Tushumlar topilmadi')}</div>`}
+      <div style="margin-top:10px;font-size:12px;font-weight:700">${L('Лог действий (время/источник)','Harakat logi (vaqt/manba)')}</div>
+      ${logEventsRows || `<div class="admin-empty">${L('Лог пуст','Log bo\'sh')}</div>`}
+    </div>`,
     okLabel: L('Понятно','Tushunarli'),
     onConfirm: () => {}
   });
